@@ -1,6 +1,9 @@
 lzbase62
 ========
 
+[![Build Status](https://travis-ci.org/polygonplanet/lzbase62.svg)](https://travis-ci.org/polygonplanet/lzbase62)
+
+
 LZ77(LZSS) based compression algorithm in base62 for JavaScript.
 
 The compressed result will be a string in base 62 (0-9A-Za-z) characters.
