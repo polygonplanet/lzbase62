@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="lzbase62 : LZ77(LZSS) based compression algorithm in base62 for JavaScript.">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>lzbase62</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/polygonplanet/lzbase62">View on GitHub</a>
+
+          <h1 id="project_title">lzbase62</h1>
+          <h2 id="project_tagline">LZ77(LZSS) based compression algorithm in base62 for JavaScript.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/polygonplanet/lzbase62/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/polygonplanet/lzbase62/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="lzbase62" class="anchor" href="#lzbase62"><span class="octicon octicon-link"></span></a>lzbase62</h1>
+
+<p>LZ77(LZSS) based compression algorithm in base62 for JavaScript.</p>
+
+<p>The compressed result will be a string in base 62 (0-9A-Za-z) characters.</p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<h3>
+<a name="in-a-browser" class="anchor" href="#in-a-browser"><span class="octicon octicon-link"></span></a>In a browser:</h3>
+
+<div class="highlight highlight-html"><pre><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"lzbase62.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</pre></div>
+
+<p>or</p>
+
+<div class="highlight highlight-html"><pre><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"lzbase62.min.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</pre></div>
+
+<p>The object named "lzbase62" will defined in the global scope.</p>
+
+<h3>
+<a name="in-nodejs" class="anchor" href="#in-nodejs"><span class="octicon octicon-link"></span></a>In Node.js:</h3>
+
+<div class="highlight highlight-bash"><pre>npm install lzbase62
+</pre></div>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">lzbase62</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'lzbase62'</span><span class="p">);</span>
+</pre></div>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<ul>
+<li><p>{<em>string</em>} lzbase62.<strong>compress</strong> ( {<em>string</em>} data )<br>
+Compress data to a base 62(0-9a-zA-Z) encoded string.<br>
+<a href="https://github.com/param" class="user-mention">@param</a> {<em>string</em>} <em>data</em> Input data<br>
+<a href="https://github.com/return" class="user-mention">@return</a> {<em>string</em>} Compressed data  </p></li>
+<li><p>{<em>string</em>} lzbase62.<strong>decompress</strong> ( {<em>string</em>} data )<br>
+Decompress data from a base 62(0-9a-zA-Z) encoded string.<br>
+<a href="https://github.com/param" class="user-mention">@param</a> {<em>string</em>} <em>data</em> Input data<br>
+<a href="https://github.com/return" class="user-mention">@return</a> {<em>string</em>} Decompressed data  </p></li>
+</ul>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="s1">'hello hello hello'</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">compressed</span> <span class="o">=</span> <span class="nx">lzbase62</span><span class="p">.</span><span class="nx">compress</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">compressed</span><span class="p">);</span> <span class="c1">// sBpBwBwBzB9GAM</span>
+<span class="kd">var</span> <span class="nx">decompressed</span> <span class="o">=</span> <span class="nx">lzbase62</span><span class="p">.</span><span class="nx">decompress</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">decompressed</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="nx">data</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span> <span class="c1">// true</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">decompressed</span> <span class="o">===</span> <span class="nx">data</span><span class="p">);</span> <span class="c1">// true</span>
+</pre></div>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>MIT</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">lzbase62 maintained by <a href="https://github.com/polygonplanet">polygonplanet</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
