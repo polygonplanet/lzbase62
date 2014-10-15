@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>lzbase62 - Demo</title>
+<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="js/lzbase62/lzbase62.js"></script>
+<script>
+var getByteSize = (function() {
+  var s, i, len;
+  var toCharCode = function() {
+    var c1 = s.charCodeAt(i), c2, j;
+    if (0xD800 <= c1 && c1 <= 0xD8FF) {
+      j = i + 1;
+      if (j < len) {
+        c2 = s.charCodeAt(j);
+        if (0xDC00 <= c2 && c2 <= 0xDFFF) {
+          c1 = ((c1 & 0x3FF) << 10) + (c2 & 0x3FF) + 0x10000;
+          i = j;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+    return c1;
+  };
+
+  return function(string) {
+    var size = 0, c;
+    s = String(string);
+    if (s) {
+      len = s.length;
+      for (i = 0; i < len; i++) {
+        c = toCharCode();
+        if (c !== false) {
+          if (c < 0x80) {
+            size += 1;
+          } else if (c < 0x800) {
+            size += 2;
+          } else if (c < 0x10000) {
+            size += 3;
+          } else if (c < 0x200000) {
+            size += 4;
+          } else if (c < 0x4000000) {
+            size += 5;
+          } else {
+            size += 6;
+          }
+        }
+      }
+    }
+    s = i = len = null;
+    return size;
+  };
+}());
+
+
+
+var libraries = {
+  lzbase62: {
+    compress: function(data, cb) {
+      cb(lzbase62.compress(data));
+    },
+    decompress: function(data, cb) {
+      cb(lzbase62.decompress(data));
+    },
+    getLength: function(output) {
+      return output.length;
+    },
+    getByteSize: function(output) {
+      return getByteSize(output);
+    }
+  }
+};
+
+
+$(document).ready(function() {
+  //var method = $('#libraries :selected').val();
+  var method = 'lzbase62';
+
+  $('#libraries').on('change', function() {
+    method = $(this).find(':selected').val();
+  });
+
+  var updateLength = function() {
+    var input = $('#input').val();
+    var output = $('#output').val();
+    var inputLength = input.length;
+    var inputBytes = getByteSize(input);
+    var outputLength = libraries[method].getLength(output);
+    var outputBytes = libraries[method].getByteSize(output);
+
+    $('#input-length').text('length=' + inputLength + ', ' + inputBytes + ' bytes (UTF-8)');
+    $('#output-length').text('length=' + outputLength + ', ' + outputBytes + ' bytes (UTF-8)');
+  };
+
+  $('#input, #output').on('change keyup paste', updateLength);
+
+  $('#clear-input').on('click', function() {
+    $('#input').val('');
+    updateLength();
+  });
+
+  $('#clear-output').on('click', function() {
+    $('#output').val('');
+    updateLength();
+  });
+
+  $('#compress').on('click', function() {
+    var input = $('#input').val();
+    var start = Date.now();
+
+    libraries[method].compress(input, function(result) {
+      var time = Date.now() - start;
+      var inputBytes = getByteSize(input);
+      var resultBytes = libraries[method].getByteSize(result);
+      var ratio = (resultBytes / inputBytes).toFixed(4);
+      //libraries[method].decompress(result, function(decompressed) {
+        $('#output').val(result);
+        $('#benchmark').text('Compressed time: ' + time + 'ms.');
+        $('#ratio').text('Compression ratio: ' + resultBytes + '/' + inputBytes + '=' + ratio).show();
+        //$('#compare').text('Compare: decompress(compress(input)) == input: ' + (input === decompressed)).show();
+        $('.benchmark-separator').text('/').show();
+        $('.benchmark-separator:last').hide();
+
+        updateLength();
+      //});
+    });
+  });
+
+  $('#decompress').on('click', function() {
+    var output = $('#output').val();
+    var start = Date.now();
+
+    libraries[method].decompress(output, function(result) {
+      var time = Date.now() - start;
+
+      $('#input').val(result);
+      $('#benchmark').text('Compressed time: ' + time + 'ms.');
+      $('#ratio').text('').hide();
+      //$('#compare').text('').hide();
+      $('.benchmark-separator').text('').hide();
+
+      updateLength();
+    });
+  });
+
+  var sampleText = 'Sample text, hello hello\nCode for test:\n' +
+    document.documentElement.innerHTML;
+
+  $('#sample-input').on('click', function() {
+    $('#input').val(sampleText);
+    updateLength();
+  });
+
+  $('#input').val(sampleText);
+  $('#output').val('');
+  updateLength();
+});
+</script>
+<style>
+textarea {
+  width: 99%;
+  height: 80px;
+}
+
+.controller {
+  margin: 1em;
+}
+
+.field {
+  margin-bottom: 0.5em;
+}
+
+#compress {
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+.result-info > div {
+  float: left;
+}
+
+.result-info > .benchmark-separator {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>lzbase62 Demo</h1>
+    <p>
+      LZ77(LZSS) based compression algorithm in base62 for JavaScript.
+      <br>
+      The compressed result will be a string in base 62 (0-9A-Za-z) characters.
+    </p>
+    <fieldset>
+      <legend>Input</legend>
+      <div class="field">
+        <textarea id="input" class="form-control"></textarea>
+      </div>
+      <div class="field">
+        <button id="clear-input" class="btn btn-info btn-sm">Clear</button>
+        <button id="sample-input" class="btn btn-info btn-sm">Set sample text</button>
+      </div>
+      <div id="input-length"></div>
+    </fieldset>
+    <div class="controller">
+      <div class="field">
+        <button id="compress" class="btn btn-primary btn-default">&#8595; Compress &#8595;</button>
+        <button id="decompress" class="btn btn-primary btn-default">&#8593; Decompress &#8593;</button>
+      </div>
+      <div class="result-info clearfix">
+        <div id="benchmark"></div>
+        <div class="benchmark-separator"></div>
+        <div id="ratio"></div>
+        <div class="benchmark-separator"></div>
+        <div id="compare"></div>
+      </div>
+    </div>
+    <fieldset>
+      <legend>Result</legend>
+      <div class="field">
+        <textarea id="output" class="form-control"></textarea>
+      </div>
+      <div class="field">
+        <button id="clear-output" class="btn btn-info btn-sm">Clear</button>
+      </div>
+      <div id="output-length"></div>
+      <div id="output-ratio"></div>
+    </fieldset>
+    <div class="footer">
+      <a href="https://github.com/polygonplanet/lzbase62">Repository in GitHub</a>
+    </div>
+  </div>
+</body>
+</html>

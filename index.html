@@ -69,12 +69,12 @@
 <ul>
 <li><p>{<em>string</em>} lzbase62.<strong>compress</strong> ( {<em>string</em>} data )<br>
 Compress data to a base 62(0-9a-zA-Z) encoded string.<br>
-<a href="https://github.com/param" class="user-mention">@param</a> {<em>string</em>} <em>data</em> Input data<br>
-<a href="https://github.com/return" class="user-mention">@return</a> {<em>string</em>} Compressed data  </p></li>
+@param {<em>string</em>} <em>data</em> Input data<br>
+@return {<em>string</em>} Compressed data  </p></li>
 <li><p>{<em>string</em>} lzbase62.<strong>decompress</strong> ( {<em>string</em>} data )<br>
 Decompress data from a base 62(0-9a-zA-Z) encoded string.<br>
-<a href="https://github.com/param" class="user-mention">@param</a> {<em>string</em>} <em>data</em> Input data<br>
-<a href="https://github.com/return" class="user-mention">@return</a> {<em>string</em>} Decompressed data  </p></li>
+@param {<em>string</em>} <em>data</em> Input data<br>
+@return {<em>string</em>} Decompressed data  </p></li>
 </ul>
 
 <div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="s1">'hello hello hello'</span><span class="p">;</span>
@@ -84,6 +84,11 @@ Decompress data from a base 62(0-9a-zA-Z) encoded string.<br>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">decompressed</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="nx">data</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span> <span class="c1">// true</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">decompressed</span> <span class="o">===</span> <span class="nx">data</span><span class="p">);</span> <span class="c1">// true</span>
 </pre></div>
+
+<h2>
+<a name="demo" class="anchor" href="#demo"><span class="octicon octicon-link"></span></a>Demo</h2>
+
+<p><a href="demo/">Demo</a></p>
 
 <h2>
 <a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
@@ -99,8 +104,6 @@ Decompress data from a base 62(0-9a-zA-Z) encoded string.<br>
         <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-
-    
 
   </body>
 </html>
