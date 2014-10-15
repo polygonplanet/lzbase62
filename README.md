@@ -6,8 +6,8 @@ lzbase62
 
 LZ77(LZSS) based compression algorithm in base62 for JavaScript.
 
-The compressed result will be a string in base 62 (0-9A-Za-z) characters.
-
+The compressed result will be a string in base 62 (0-9A-Za-z) characters.  
+This is useful when storing the large data in a size limited storage (e.g., localStorage, cookie etc.).
 
 ## Installation
 
