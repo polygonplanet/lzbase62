@@ -54,6 +54,10 @@ console.log(decompressed.length < data.length); // true
 console.log(decompressed === data); // true
 ```
 
+## Demo
+
+[Demo](http://polygonplanet.github.io/lzbase62/demo/)
+
 ## License
 
 MIT
