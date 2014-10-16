@@ -50,10 +50,15 @@ var lzbase62 = require('lzbase62');
 
 ```javascript
 var data = 'hello hello hello';
+console.log(data.length); // 17
+
 var compressed = lzbase62.compress(data);
-console.log(compressed); // sBpBwBwBzB9GAM
-var decompressed = lzbase62.decompress(data);
-console.log(decompressed.length < data.length); // true
+console.log(compressed); // 'sBpBwBwBzB9GAM'
+console.log(compressed.length); // 14
+console.log(compressed.length < data.length); // true
+
+var decompressed = lzbase62.decompress(compressed);
+console.log(decompressed); // 'hello hello hello'
 console.log(decompressed === data); // true
 ```
 
