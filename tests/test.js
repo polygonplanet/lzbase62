@@ -17,6 +17,11 @@ describe('lzbase62', function() {
       tests.unicode += String.fromCharCode(i);
     }
 
+    tests.unicodeReverse = '';
+    for (i = 0xffff; i >= 0; --i) {
+      tests.unicodeReverse += String.fromCharCode(i);
+    }
+
     tests.randoms = [];
     var s, code;
     for (var j = 0; j < 3; j++) {
@@ -87,6 +92,14 @@ describe('lzbase62', function() {
       var decompressed = lzbase62.decompress(compressed);
       assert.equal(decompressed, s);
       tests.unicode = null;
+    });
+
+    it('unicode [U+0000 - U+FFFF] reverse', function() {
+      assert(tests.unicodeReverse.length > 0);
+      var compressed = lzbase62.compress(tests.unicodeReverse);
+      assert(compressed.length > 0);
+      var decompressed = lzbase62.decompress(compressed);
+      assert.equal(decompressed, tests.unicodeReverse);
     });
 
     it('unicode chars', function() {
