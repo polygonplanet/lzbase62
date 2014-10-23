@@ -3,7 +3,7 @@
  *
  * @description  LZ77(LZSS) based compression algorithm in base62 for JavaScript.
  * @fileOverview Data compression library
- * @version      1.1.0
+ * @version      1.1.1
  * @date         2014-10-23
  * @link         https://github.com/polygonplanet/lzbase62
  * @copyright    Copyright (c) 2014 polygon planet <polygon.planet.aqua@gmail.com>
@@ -28,7 +28,7 @@
 
   var table = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-  var WINDOW_MAX = 256;
+  var WINDOW_MAX = 1024;
   var BUFFER_MAX = table.length - 3;
   var TABLE_MAX = BUFFER_MAX * (BUFFER_MAX + 1);
 
