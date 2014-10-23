@@ -3,8 +3,8 @@
  *
  * @description  LZ77(LZSS) based compression algorithm in base62 for JavaScript.
  * @fileOverview Data compression library
- * @version      1.0.2
- * @date         2014-10-16
+ * @version      1.1.0
+ * @date         2014-10-23
  * @link         https://github.com/polygonplanet/lzbase62
  * @copyright    Copyright (c) 2014 polygon planet <polygon.planet.aqua@gmail.com>
  * @license      Licensed under the MIT license.
@@ -26,16 +26,18 @@
 
   var fromCharCode = String.fromCharCode;
 
-  var WINDOW_MAX = 3660;
-  var BUFFER_MAX = 60;
-
   var table = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+  var WINDOW_MAX = 256;
+  var BUFFER_MAX = table.length - 3;
+  var TABLE_MAX = BUFFER_MAX * (BUFFER_MAX + 1);
 
   function LZBase62() {
     this._data = null;
     this._offset = null;
     this._index = null;
     this._length = null;
+    this._end = false;
   }
 
   LZBase62.prototype = {
@@ -43,41 +45,41 @@
       return repeat(' ', WINDOW_MAX);
     },
     _search: function() {
-      var index = -1;
-      var win, s, s2, pos, lastIndex;
-
       var sub = this._data.substr(this._offset, BUFFER_MAX);
       if (!sub) {
+        this._end = true;
         return false;
       }
 
-      for (var i = 2, len = sub.length; i <= len; i++) {
-        s = sub.substring(0, i);
-        win = this._data.substring(
-          this._offset - WINDOW_MAX,
-          this._offset + i - 1
-        );
+      var i = 4;
+      var len = sub.length;
+      if (sub.length < i) {
+        return false;
+      }
 
-        lastIndex = win.lastIndexOf(s);
-        if (~lastIndex) {
-          pos = lastIndex + this._offset - WINDOW_MAX;
+      var s = sub.slice(0, i);
+      var win = this._data.substring(
+        this._offset - WINDOW_MAX,
+        this._offset + i - 1
+      );
 
-          while (++i <= len) {
-            s = sub.substring(0, i);
-            s2 = this._data.substring(pos, pos + i);
-            if (s !== s2) {
-              break;
-            }
-          }
+      var lastIndex = win.lastIndexOf(s);
+      if (!~lastIndex) {
+        return false;
+      }
 
-          i--;
-          index = WINDOW_MAX - lastIndex;
-        } else {
+      var pos = lastIndex + this._offset - WINDOW_MAX;
+      var c, c2;
+
+      while (++i <= len) {
+        c = sub.charAt(i - 1);
+        c2 = this._data.charAt(pos + i - 1);
+        if (c !== c2) {
           break;
         }
       }
 
-      this._index = index;
+      this._index = WINDOW_MAX - lastIndex;
       this._length = i - 1;
 
       return true;
@@ -88,7 +90,9 @@
       }
 
       var result = '';
-      var c, c1, c2, c3, c4, next;
+      var c, c1, c2, c3, c4, found;
+      var index = null;
+      var out = false;
 
       var chars = table.split('');
       var win = this._createWindow();
@@ -98,29 +102,49 @@
       win = data = null;
 
       for (;;) {
-        next = this._search();
-        if (!next) {
+        found = this._search();
+        if (this._end) {
           break;
         }
 
-        if (!~this._index) {
+        if (!found) {
           c = this._data.charCodeAt(this._offset++);
-          if (c < WINDOW_MAX) {
+          if (c < TABLE_MAX) {
             c1 = c % BUFFER_MAX;
             c2 = (c - c1) / BUFFER_MAX;
-            result += chars[c1] + chars[c2];
+
+            if (!out && index === c2) {
+              result += chars[c1];
+            } else {
+              index = c2;
+              result += chars[BUFFER_MAX] + chars[c1] + chars[c2];
+
+              out = false;
+            }
           } else {
-            c1 = c % WINDOW_MAX;
-            c2 = (c - c1) / WINDOW_MAX;
+            c1 = c % TABLE_MAX;
+            c2 = (c - c1) / TABLE_MAX;
             c3 = c1 % BUFFER_MAX;
             c4 = (c1 - c3) / BUFFER_MAX;
-            result += chars[BUFFER_MAX] + chars[c2] + chars[c3] + chars[c4];
+
+            if (out && index === c2) {
+              result += chars[c3] + chars[c4];
+            } else {
+              index = c2;
+              result += chars[BUFFER_MAX + 1] +
+                chars[c2] + chars[c3] + chars[c4];
+
+              out = true;
+            }
           }
         } else {
           c1 = this._index % BUFFER_MAX;
           c2 = (this._index - c1) / BUFFER_MAX;
-          result += chars[BUFFER_MAX + 1] +
+
+          result += chars[BUFFER_MAX + 2] +
             chars[c1] + chars[c2] + chars[this._length];
+
+          index = null;
           this._offset += this._length;
         }
       }
@@ -133,9 +157,10 @@
       }
 
       var result = this._createWindow();
-      var i, len, c, c2, c3, code, index, length, buffer, sub;
+      var i, len, c, c2, c3, code, pos, length, buffer, sub;
       var out = false;
       var expand = false;
+      var index = null;
 
       var chars = {};
       for (i = 0, len = table.length; i < len; i++) {
@@ -145,20 +170,22 @@
       for (i = 0, len = data.length; i < len; i++) {
         c = chars[data.charAt(i)];
         if (c < BUFFER_MAX) {
-          c2 = chars[data.charAt(++i)];
           if (!expand) {
             if (!out) {
-              code = c2 * BUFFER_MAX + c;
+              if (index === null) {
+                index = chars[data.charAt(++i)];
+              }
+              code = index * BUFFER_MAX + c;
             } else {
               c3 = chars[data.charAt(++i)];
-              code = c3 * BUFFER_MAX + c2 + c * WINDOW_MAX;
-              out = false;
+              code = c3 * BUFFER_MAX + c + index * TABLE_MAX;
             }
             result += fromCharCode(code);
           } else {
-            index = c2 * BUFFER_MAX + c;
+            c2 = chars[data.charAt(++i)];
+            pos = c2 * BUFFER_MAX + c;
             length = chars[data.charAt(++i)];
-            sub = result.slice(-WINDOW_MAX).slice(-index).substring(0, length);
+            sub = result.slice(-WINDOW_MAX).slice(-pos).substring(0, length);
             if (sub) {
               buffer = '';
               while (buffer.length < length) {
@@ -169,9 +196,14 @@
             expand = false;
           }
         } else if (c === BUFFER_MAX) {
-          out = true;
+          out = false;
+          index = null;
         } else if (c === BUFFER_MAX + 1) {
+          out = true;
+          index = chars[data.charAt(++i)];
+        } else if (c === BUFFER_MAX + 2) {
           expand = true;
+          index = null;
         }
       }
 
@@ -179,11 +211,10 @@
     }
   };
 
-
   // ES6 String.prototype.repeat - via SpiderMonkey
   // http://hg.mozilla.org/mozilla-central/file/01f04d75519d/js/src/builtin/String.js
   function repeat(string, count) {
-    if (typeof String.prototype.repeat === 'function') {
+    if (typeof string.repeat === 'function') {
       return string.repeat(count);
     }
 
