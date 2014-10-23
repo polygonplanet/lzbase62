@@ -41,20 +41,21 @@ var lzbase62 = require('lzbase62');
 * {_string_} lzbase62.**compress** ( {_string_} data )  
   Compress data to a base 62(0-9a-zA-Z) encoded string.  
   @param {_string_} _data_ Input data  
-  @return {_string_} Compressed data  
+  @return {_string_} Compressed data
 
 * {_string_} lzbase62.**decompress** ( {_string_} data )  
   Decompress data from a base 62(0-9a-zA-Z) encoded string.  
   @param {_string_} _data_ Input data  
-  @return {_string_} Decompressed data  
+  @return {_string_} Decompressed data
+
 
 ```javascript
 var data = 'hello hello hello';
 console.log(data.length); // 17
 
 var compressed = lzbase62.compress(data);
-console.log(compressed); // 'sBpBwBwBzB9GAM'
-console.log(compressed.length); // 14
+console.log(compressed); // '7tBqxx09GAM'
+console.log(compressed.length); // 11
 console.log(compressed.length < data.length); // true
 
 var decompressed = lzbase62.decompress(compressed);
@@ -64,7 +65,7 @@ console.log(decompressed === data); // true
 
 ## Demo
 
-[Demo](http://polygonplanet.github.io/lzbase62/demo/)
+* [Demo](http://polygonplanet.github.io/lzbase62/demo/)
 
 ## License
 
