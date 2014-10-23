@@ -3,8 +3,8 @@
  *
  * @description  LZ77(LZSS) based compression algorithm in base62 for JavaScript.
  * @fileOverview Data compression library
- * @version      1.1.1
- * @date         2014-10-23
+ * @version      1.2.0
+ * @date         2014-10-24
  * @link         https://github.com/polygonplanet/lzbase62
  * @copyright    Copyright (c) 2014 polygon planet <polygon.planet.aqua@gmail.com>
  * @license      Licensed under the MIT license.
@@ -28,9 +28,26 @@
 
   var table = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
+  // Sliding Window
   var WINDOW_MAX = 1024;
-  var BUFFER_MAX = table.length - 3;
-  var TABLE_MAX = BUFFER_MAX * (BUFFER_MAX + 1);
+
+  // Buffers
+  var TABLE_LENGTH = table.length;
+  var BUFFER_MAX = TABLE_LENGTH - 3;
+  var TABLE_BUFFER_MAX = BUFFER_MAX * (BUFFER_MAX + 1);
+
+  // Starting points
+  var COMPRESS_START = table.length - 1;
+  var CHAR_START = table.length - 2;
+
+  // Unicode table : U+0000 - U+0084
+  var LATIN_CHAR_MAX = 11;
+  var LATIN_BUFFER_MAX = LATIN_CHAR_MAX * (LATIN_CHAR_MAX + 1);
+
+  // Unicode table : U+0000 - U+FFFF
+  var UNICODE_CHAR_MAX = 40;
+  var UNICODE_BUFFER_MAX = UNICODE_CHAR_MAX * (UNICODE_CHAR_MAX + 1);
+
 
   function LZBase62() {
     this._data = null;
@@ -53,7 +70,7 @@
 
       var i = 4;
       var len = sub.length;
-      if (sub.length < i) {
+      if (len < i) {
         return false;
       }
 
@@ -91,8 +108,8 @@
 
       var result = '';
       var c, c1, c2, c3, c4, found;
-      var index = null;
-      var out = false;
+
+      var index, lastIndex;
 
       var chars = table.split('');
       var win = this._createWindow();
@@ -109,43 +126,44 @@
 
         if (!found) {
           c = this._data.charCodeAt(this._offset++);
-          if (c < TABLE_MAX) {
-            c1 = c % BUFFER_MAX;
-            c2 = (c - c1) / BUFFER_MAX;
+          if (c < LATIN_BUFFER_MAX) {
+            c1 = c % UNICODE_CHAR_MAX;
+            c2 = (c - c1) / UNICODE_CHAR_MAX;
 
-            if (!out && index === c2) {
+            // Latin index
+            index = c2 + TABLE_LENGTH + 1;
+            if (lastIndex === index) {
               result += chars[c1];
             } else {
-              index = c2;
-              result += chars[BUFFER_MAX] + chars[c1] + chars[c2];
-
-              out = false;
+              result += chars[index - 20] + chars[c1];
+              lastIndex = index;
             }
           } else {
-            c1 = c % TABLE_MAX;
-            c2 = (c - c1) / TABLE_MAX;
-            c3 = c1 % BUFFER_MAX;
-            c4 = (c1 - c3) / BUFFER_MAX;
+            c1 = c % UNICODE_BUFFER_MAX;
+            c2 = (c - c1) / UNICODE_BUFFER_MAX;
+            c3 = c1 % UNICODE_CHAR_MAX;
+            c4 = (c1 - c3) / UNICODE_CHAR_MAX;
 
-            if (out && index === c2) {
+            // Unicode index
+            index = c2 + TABLE_LENGTH + 5;
+            if (lastIndex === index) {
               result += chars[c3] + chars[c4];
             } else {
-              index = c2;
-              result += chars[BUFFER_MAX + 1] +
-                chars[c2] + chars[c3] + chars[c4];
-
-              out = true;
+              result += chars[CHAR_START] +
+                chars[index - TABLE_LENGTH] + chars[c3] + chars[c4];
+              lastIndex = index;
             }
           }
         } else {
           c1 = this._index % BUFFER_MAX;
           c2 = (this._index - c1) / BUFFER_MAX;
 
-          result += chars[BUFFER_MAX + 2] +
+          result += chars[COMPRESS_START] +
             chars[c1] + chars[c2] + chars[this._length];
+          this._offset += this._length;
 
           index = null;
-          this._offset += this._length;
+          lastIndex = -1;
         }
       }
 
@@ -159,7 +177,6 @@
       var result = this._createWindow();
       var i, len, c, c2, c3, code, pos, length, buffer, sub;
       var out = false;
-      var expand = false;
       var index = null;
 
       var chars = {};
@@ -169,40 +186,44 @@
 
       for (i = 0, len = data.length; i < len; i++) {
         c = chars[data.charAt(i)];
-        if (c < BUFFER_MAX) {
-          if (!expand) {
-            if (!out) {
-              if (index === null) {
-                index = chars[data.charAt(++i)];
-              }
-              code = index * BUFFER_MAX + c;
-            } else {
-              c3 = chars[data.charAt(++i)];
-              code = c3 * BUFFER_MAX + c + index * TABLE_MAX;
-            }
-            result += fromCharCode(code);
+        if (c >= TABLE_LENGTH) {
+          continue;
+        }
+
+        if (c < UNICODE_CHAR_MAX + 3) {
+          if (!out) {
+            // Latin index
+            code = index * UNICODE_CHAR_MAX + c;
           } else {
-            c2 = chars[data.charAt(++i)];
-            pos = c2 * BUFFER_MAX + c;
-            length = chars[data.charAt(++i)];
-            sub = result.slice(-WINDOW_MAX).slice(-pos).substring(0, length);
-            if (sub) {
-              buffer = '';
-              while (buffer.length < length) {
-                buffer += sub;
-              }
-              result += buffer.substring(0, length);
-            }
-            expand = false;
+            // Unicode index
+            c3 = chars[data.charAt(++i)];
+            code = c3 * UNICODE_CHAR_MAX + c + UNICODE_BUFFER_MAX * index;
           }
-        } else if (c === BUFFER_MAX) {
+          result += fromCharCode(code);
+        } else if (c < UNICODE_CHAR_MAX + 7) {
+          // Latin starting point
+          index = c - 43;
           out = false;
-          index = null;
-        } else if (c === BUFFER_MAX + 1) {
+        } else if (c === CHAR_START) {
+          // Unicode starting point
+          c2 = chars[data.charAt(++i)];
+          index = c2 - 5;
           out = true;
-          index = chars[data.charAt(++i)];
-        } else if (c === BUFFER_MAX + 2) {
-          expand = true;
+        } else if (c === COMPRESS_START) {
+          c2 = chars[data.charAt(++i)];
+          c3 = chars[data.charAt(++i)];
+          pos = c3 * BUFFER_MAX + c2;
+          length = chars[data.charAt(++i)];
+
+          sub = result.slice(-WINDOW_MAX).slice(-pos).substring(0, length);
+          if (sub) {
+            buffer = '';
+            while (buffer.length < length) {
+              buffer += sub;
+            }
+            buffer = buffer.substring(0, length);
+            result += buffer;
+          }
           index = null;
         }
       }
