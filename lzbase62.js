@@ -3,7 +3,7 @@
  *
  * @description  LZ77(LZSS) based compression algorithm in base62 for JavaScript.
  * @fileOverview Data compression library
- * @version      1.2.0
+ * @version      1.2.1
  * @date         2014-10-24
  * @link         https://github.com/polygonplanet/lzbase62
  * @copyright    Copyright (c) 2014 polygon planet <polygon.planet.aqua@gmail.com>
@@ -28,17 +28,17 @@
 
   var table = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-  // Sliding Window
-  var WINDOW_MAX = 1024;
-
   // Buffers
   var TABLE_LENGTH = table.length;
   var BUFFER_MAX = TABLE_LENGTH - 3;
   var TABLE_BUFFER_MAX = BUFFER_MAX * (BUFFER_MAX + 1);
 
+  // Sliding Window
+  var WINDOW_MAX = 1024;
+
   // Starting points
-  var COMPRESS_START = table.length - 1;
-  var CHAR_START = table.length - 2;
+  var COMPRESS_START = TABLE_LENGTH - 1;
+  var CHAR_START = TABLE_LENGTH - 2;
 
   // Unicode table : U+0000 - U+0084
   var LATIN_CHAR_MAX = 11;
@@ -54,7 +54,6 @@
     this._offset = null;
     this._index = null;
     this._length = null;
-    this._end = false;
   }
 
   LZBase62.prototype = {
@@ -62,42 +61,33 @@
       return repeat(' ', WINDOW_MAX);
     },
     _search: function() {
-      var sub = this._data.substr(this._offset, BUFFER_MAX);
-      if (!sub) {
-        this._end = true;
-        return false;
-      }
-
       var i = 4;
+      var sub = this._data.substr(this._offset, BUFFER_MAX);
       var len = sub.length;
+
       if (len < i) {
         return false;
       }
 
       var s = sub.slice(0, i);
-      var win = this._data.substring(
-        this._offset - WINDOW_MAX,
-        this._offset + i - 1
-      );
+      var pos = this._offset - WINDOW_MAX;
+      var win = this._data.substring(pos, this._offset + i - 1);
 
       var lastIndex = win.lastIndexOf(s);
       if (!~lastIndex) {
         return false;
       }
 
-      var pos = lastIndex + this._offset - WINDOW_MAX;
-      var c, c2;
-
-      while (++i <= len) {
-        c = sub.charAt(i - 1);
-        c2 = this._data.charAt(pos + i - 1);
-        if (c !== c2) {
+      pos += lastIndex;
+      while (i < len) {
+        if (sub.charAt(i) !== this._data.charAt(pos + i)) {
           break;
         }
+        i++;
       }
 
       this._index = WINDOW_MAX - lastIndex;
-      this._length = i - 1;
+      this._length = i;
 
       return true;
     },
@@ -107,7 +97,7 @@
       }
 
       var result = '';
-      var c, c1, c2, c3, c4, found;
+      var c, c1, c2, c3, c4;
 
       var index, lastIndex;
 
@@ -118,13 +108,10 @@
       this._data = win + data;
       win = data = null;
 
-      for (;;) {
-        found = this._search();
-        if (this._end) {
-          break;
-        }
+      var len = this._data.length;
 
-        if (!found) {
+      while (this._offset < len) {
+        if (!this._search()) {
           c = this._data.charCodeAt(this._offset++);
           if (c < LATIN_BUFFER_MAX) {
             c1 = c % UNICODE_CHAR_MAX;
