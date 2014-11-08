@@ -120,10 +120,12 @@ $(document).ready(function() {
       var inputBytes = getByteSize(input);
       var resultBytes = libraries[method].getByteSize(result);
       var ratio = (resultBytes / inputBytes).toFixed(4);
+      var percent = Math.round(ratio * 100);
+
       //libraries[method].decompress(result, function(decompressed) {
         $('#output').val(result);
         $('#benchmark').text('Compressed time: ' + time + 'ms.');
-        $('#ratio').text('Compression ratio: ' + resultBytes + '/' + inputBytes + '=' + ratio).show();
+        $('#ratio').text('Compression ratio: ' + resultBytes + '/' + inputBytes + '=' + ratio + '=' percent + '%').show();
         //$('#compare').text('Compare: decompress(compress(input)) == input: ' + (input === decompressed)).show();
         $('.benchmark-separator').text('/').show();
         $('.benchmark-separator:last').hide();
@@ -166,7 +168,7 @@ $(document).ready(function() {
 <style>
 textarea {
   width: 99%;
-  height: 80px;
+  height: 120px;
 }
 
 .controller {
