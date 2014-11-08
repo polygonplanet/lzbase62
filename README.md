@@ -40,7 +40,7 @@ var lzbase62 = require('lzbase62');
 
 * {_string_} lzbase62.**compress** ( {_string_} data )  
   Compress data to a base 62(0-9a-zA-Z) encoded string.  
-  @param {_string_} _data_ Input data  
+  @param {_string_|_Buffer_} _data_ Input data  
   @return {_string_} Compressed data
 
 * {_string_} lzbase62.**decompress** ( {_string_} data )  
