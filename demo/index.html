@@ -125,7 +125,7 @@ $(document).ready(function() {
       //libraries[method].decompress(result, function(decompressed) {
         $('#output').val(result);
         $('#benchmark').text('Compressed time: ' + time + 'ms.');
-        $('#ratio').text('Compression ratio: ' + resultBytes + '/' + inputBytes + '=' + ratio + '=' percent + '%').show();
+        $('#ratio').text('Compression ratio: ' + resultBytes + '/' + inputBytes + '=' + ratio + '=' + percent + '%').show();
         //$('#compare').text('Compare: decompress(compress(input)) == input: ' + (input === decompressed)).show();
         $('.benchmark-separator').text('/').show();
         $('.benchmark-separator:last').hide();
