@@ -3,8 +3,8 @@
  *
  * @description  LZ77(LZSS) based compression algorithm in base62 for JavaScript.
  * @fileOverview Data compression library
- * @version      1.2.2
- * @date         2014-11-08
+ * @version      1.3.0
+ * @date         2014-11-09
  * @link         https://github.com/polygonplanet/lzbase62
  * @copyright    Copyright (c) 2014 polygon planet <polygon.planet.aqua@gmail.com>
  * @license      Licensed under the MIT license.
@@ -31,16 +31,12 @@
   // Buffers
   var TABLE_LENGTH = table.length;
   var TABLE_DIFF = Math.max(TABLE_LENGTH, 62) - Math.min(TABLE_LENGTH, 62);
-  var BUFFER_MAX = TABLE_LENGTH - 3;
+  var BUFFER_MAX = TABLE_LENGTH - 1;
   var TABLE_BUFFER_MAX = BUFFER_MAX * (BUFFER_MAX + 1);
 
   // Sliding Window
   var WINDOW_MAX = 1024;
   var WINDOW_BUFFER_MAX = 128;
-
-  // Starting points
-  var COMPRESS_START = TABLE_LENGTH - 1;
-  var CHAR_START = TABLE_LENGTH - 2;
 
   // Unicode table : U+0000 - U+0084
   var LATIN_CHAR_MAX = 11;
@@ -55,9 +51,11 @@
   var LATIN_INDEX_START = TABLE_DIFF + 20;
   var UNICODE_INDEX = TABLE_LENGTH + 5;
 
-  // Decode positions
+  // Decode/Start positions
   var DECODE_MAX = TABLE_LENGTH - TABLE_DIFF - 19;
   var LATIN_DECODE_MAX = UNICODE_CHAR_MAX + 7;
+  var CHAR_START = LATIN_DECODE_MAX + 1;
+  var COMPRESS_START = CHAR_START + 1;
 
 
   function LZBase62() {
@@ -76,10 +74,6 @@
       var offset = this._offset;
       var sub = this._data.substr(offset, BUFFER_MAX);
       var len = sub.length;
-
-      if (len < i) {
-        return false;
-      }
 
       var pos = offset - WINDOW_BUFFER_MAX;
       var s, win, index;
@@ -154,9 +148,7 @@
           c1 = this._index % BUFFER_MAX;
           c2 = (this._index - c1) / BUFFER_MAX;
 
-          result += chars[COMPRESS_START] +
-            chars[c1] + chars[c2] + chars[this._length];
-
+          result += chars[c2 + COMPRESS_START] + chars[c1] + chars[this._length];
           this._offset += this._length;
           index = -1;
           lastIndex = -2;
@@ -205,10 +197,9 @@
           c2 = chars[data.charAt(++i)];
           index = c2 - 5;
           out = true;
-        } else if (c === COMPRESS_START) {
+        } else {
           c2 = chars[data.charAt(++i)];
-          c3 = chars[data.charAt(++i)];
-          pos = c3 * BUFFER_MAX + c2;
+          pos = (c - COMPRESS_START) * BUFFER_MAX + c2;
           length = chars[data.charAt(++i)];
 
           sub = result.slice(-WINDOW_BUFFER_MAX).slice(-pos).substring(0, length);

@@ -54,8 +54,8 @@ var data = 'hello hello hello';
 console.log(data.length); // 17
 
 var compressed = lzbase62.compress(data);
-console.log(compressed); // 'tYVccf9GAM'
-console.log(compressed.length); // 10
+console.log(compressed); // 'tYVccfxGM'
+console.log(compressed.length); // 9
 console.log(compressed.length < data.length); // true
 
 var decompressed = lzbase62.decompress(compressed);
