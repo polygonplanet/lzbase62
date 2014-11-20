@@ -3,8 +3,8 @@
  *
  * @description  LZ77(LZSS) based compression algorithm in base62 for JavaScript.
  * @fileOverview Data compression library
- * @version      1.3.0
- * @date         2014-11-09
+ * @version      1.4.0
+ * @date         2014-11-21
  * @link         https://github.com/polygonplanet/lzbase62
  * @copyright    Copyright (c) 2014 polygon planet <polygon.planet.aqua@gmail.com>
  * @license      Licensed under the MIT license.
@@ -13,8 +13,12 @@
 (function(name, context, factory) {
 
   // Supports UMD. AMD, CommonJS/Node.js and browser context
-  if (typeof module !== 'undefined' && module.exports) {
-    module.exports = factory();
+  if (typeof exports !== 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {
+      module.exports = factory();
+    } else {
+      exports[name] = factory();
+    }
   } else if (typeof define === 'function' && define.amd) {
     define(factory);
   } else {
@@ -26,17 +30,18 @@
 
   var fromCharCode = String.fromCharCode;
 
-  var table = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var BASE62TABLE =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
   // Buffers
-  var TABLE_LENGTH = table.length;
+  var TABLE_LENGTH = BASE62TABLE.length;
   var TABLE_DIFF = Math.max(TABLE_LENGTH, 62) - Math.min(TABLE_LENGTH, 62);
   var BUFFER_MAX = TABLE_LENGTH - 1;
   var TABLE_BUFFER_MAX = BUFFER_MAX * (BUFFER_MAX + 1);
 
   // Sliding Window
   var WINDOW_MAX = 1024;
-  var WINDOW_BUFFER_MAX = 128;
+  var WINDOW_BUFFER_MAX = 304; // maximum 304
 
   // Unicode table : U+0000 - U+0084
   var LATIN_CHAR_MAX = 11;
@@ -56,61 +61,106 @@
   var LATIN_DECODE_MAX = UNICODE_CHAR_MAX + 7;
   var CHAR_START = LATIN_DECODE_MAX + 1;
   var COMPRESS_START = CHAR_START + 1;
+  var COMPRESS_FIXED_START = COMPRESS_START + 5;
+  var COMPRESS_INDEX = COMPRESS_FIXED_START + 5; // 59
+
+  // Currently, 60 and 61 of the position is not used yet.
 
 
   function LZBase62() {
-    this._data = null;
-    this._offset = null;
-    this._index = null;
-    this._length = null;
+    this.init();
   }
 
   LZBase62.prototype = {
-    _createWindow: function() {
-      return repeat(' ', WINDOW_MAX);
+    init: function() {
+      this._data = null;
+      this._offset = null;
+      this._index = null;
+      this._length = null;
     },
+    _createWindow: function() {
+      var alpha = BASE62TABLE.slice(26, 52);
+
+      var win = '';
+      var len = alpha.length;
+      var i, j, c, c2;
+
+      for (i = 0; i < len; i++) {
+        c = alpha.charAt(i);
+        for (j = len - 1; j > 15 && win.length < WINDOW_MAX; j--) {
+          c2 = alpha.charAt(j);
+          win += ' ' + c + ' ' + c2;
+        }
+      }
+
+      while (win.length < WINDOW_MAX) {
+        win = ' ' + win;
+      }
+      win = win.slice(0, WINDOW_MAX);
+
+      return win;
+    },
+    // Searches for a longer match
     _search: function() {
-      var i = 3;
+      this._length = 0;
+
       var offset = this._offset;
       var sub = this._data.substr(offset, BUFFER_MAX);
       var len = sub.length;
-
       var pos = offset - WINDOW_BUFFER_MAX;
-      var s, win, index;
+
+      var i = 2;
+      var j, s, win, index;
 
       while (i <= len) {
         s = sub.substr(0, i);
         win = this._data.substring(pos, offset + i - 1);
-        index = win.lastIndexOf(s);
-        if (~index) {
-          this._index = WINDOW_BUFFER_MAX - index;
-          this._length = i;
-        } else {
+
+        // Fast check by pre-match for the slow lastIndexOf.
+        if (!~win.indexOf(s)) {
           break;
         }
+
+        index = win.lastIndexOf(s);
+        j = pos + index;
+
+        while (i <= len) {
+          if (sub.charCodeAt(i) !== this._data.charCodeAt(j + i)) {
+            break;
+          }
+          i++;
+        }
+
+        this._index = WINDOW_BUFFER_MAX - index;
+        this._length = i;
         i++;
       }
 
-      return i > 3;
+      if (this._length > 0) {
+        return true;
+      }
+
+      return false;
     },
     compress: function(data) {
-      if (data == null) {
+      if (data == null || data.length === 0) {
         return '';
       }
 
       var result = '';
-      var c, c1, c2, c3, c4;
 
-      var index, lastIndex;
-
-      var chars = table.split('');
+      var chars = BASE62TABLE.split('');
       var win = this._createWindow();
 
       this._offset = win.length;
       this._data = win + data;
       win = data = null;
 
+      var index = -1;
+      var lastIndex = -2;
+
       var len = this._data.length;
+      var c, c1, c2, c3, c4;
 
       while (this._offset < len) {
         if (!this._search()) {
@@ -148,33 +198,43 @@
           c1 = this._index % BUFFER_MAX;
           c2 = (this._index - c1) / BUFFER_MAX;
 
-          result += chars[c2 + COMPRESS_START] + chars[c1] + chars[this._length];
+          if (this._length === 2) {
+            result += chars[c2 + COMPRESS_FIXED_START] + chars[c1];
+          } else {
+            result += chars[c2 + COMPRESS_START] +
+              chars[c1] + chars[this._length];
+          }
+
           this._offset += this._length;
           index = -1;
           lastIndex = -2;
         }
       }
 
+      this._data = null;
       return result;
     },
     decompress: function(data) {
-      if (data == null) {
+      if (data == null || data.length === 0) {
         return '';
       }
 
       var result = this._createWindow();
-      var i, len, c, c2, c3, code, pos, length, buffer, sub;
+
       var out = false;
       var index = null;
 
+      var i, len, c, c2, c3;
+      var code, pos, length, buffer, sub;
+
       var chars = {};
-      for (i = 0, len = table.length; i < len; i++) {
-        chars[table.charAt(i)] = i;
+      for (i = 0, len = BASE62TABLE.length; i < len; i++) {
+        chars[BASE62TABLE.charAt(i)] = i;
       }
 
       for (i = 0, len = data.length; i < len; i++) {
         c = chars[data.charAt(i)];
-        if (c >= TABLE_LENGTH) {
+        if (c === void 0) {
           throw new Error('Out of range in decompression');
         }
 
@@ -197,12 +257,20 @@
           c2 = chars[data.charAt(++i)];
           index = c2 - 5;
           out = true;
-        } else {
+        } else if (c < COMPRESS_INDEX) {
           c2 = chars[data.charAt(++i)];
-          pos = (c - COMPRESS_START) * BUFFER_MAX + c2;
-          length = chars[data.charAt(++i)];
 
-          sub = result.slice(-WINDOW_BUFFER_MAX).slice(-pos).substring(0, length);
+          if (c < COMPRESS_FIXED_START) {
+            pos = (c - COMPRESS_START) * BUFFER_MAX + c2;
+            length = chars[data.charAt(++i)];
+          } else {
+            pos = (c - COMPRESS_FIXED_START) * BUFFER_MAX + c2;
+            length = 2;
+          }
+
+          sub = result.slice(-WINDOW_BUFFER_MAX)
+            .slice(-pos).substring(0, length);
+
           if (sub) {
             buffer = '';
             while (buffer.length < length) {
@@ -215,33 +283,13 @@
         }
       }
 
-      return result.substring(WINDOW_MAX);
+      result = result.substring(WINDOW_MAX);
+      data = null;
+
+      return result;
     }
   };
 
-  // ES6 String.prototype.repeat - via SpiderMonkey
-  // http://hg.mozilla.org/mozilla-central/file/01f04d75519d/js/src/builtin/String.js
-  function repeat(string, count) {
-    if (typeof string.repeat === 'function') {
-      return string.repeat(count);
-    }
-
-    var result = '';
-
-    for (;;) {
-      if (count & 1) {
-        result += string;
-      }
-      count >>= 1;
-      if (count) {
-        string += string;
-      } else {
-        break;
-      }
-    }
-
-    return result;
-  }
 
   /**
    * @name lzbase62
