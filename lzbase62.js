@@ -3,8 +3,8 @@
  *
  * @description  LZ77(LZSS) based compression algorithm in base62 for JavaScript.
  * @fileOverview Data compression library
- * @version      1.4.1
- * @date         2014-11-26
+ * @version      1.4.2
+ * @date         2014-12-16
  * @link         https://github.com/polygonplanet/lzbase62
  * @copyright    Copyright (c) 2014 polygon planet <polygon.planet.aqua@gmail.com>
  * @license      Licensed under the MIT license.
