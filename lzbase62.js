@@ -3,7 +3,7 @@
  *
  * @description  LZ77(LZSS) based compression algorithm in base62 for JavaScript.
  * @fileOverview Data compression library
- * @version      1.4.3
+ * @version      1.4.5
  * @date         2015-10-04
  * @link         https://github.com/polygonplanet/lzbase62
  * @copyright    Copyright (c) 2014-2015 polygon planet <polygon.planet.aqua@gmail.com>
@@ -390,7 +390,7 @@
       for (; offset < len; offset++) {
         c = table[data.charAt(offset)];
         if (c === void 0) {
-          throw new Error('Out of range in decompression');
+          continue;
         }
 
         if (c < DECODE_MAX) {
