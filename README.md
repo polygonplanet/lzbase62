@@ -36,6 +36,12 @@ npm install lzbase62
 var lzbase62 = require('lzbase62');
 ```
 
+### bower:
+
+```bash
+bower install lzbase62
+```
+
 ## Usage
 
 * {_string_} lzbase62.**compress** ( data [, options ] )  
