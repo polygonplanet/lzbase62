@@ -1,0 +1,30 @@
+{
+  "name": "lzbase62",
+  "main": "lzbase62.js",
+  "version": "1.4.6",
+  "homepage": "https://github.com/polygonplanet/lzbase62",
+  "authors": [
+    "polygonplanet <polygon.planet.aqua@gmail.com>"
+  ],
+  "description": "LZ77(LZSS) based compression algorithm in base62 for JavaScript.",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "compression",
+    "lz77",
+    "lzss",
+    "base62",
+    "string"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
