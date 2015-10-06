@@ -1,6 +1,6 @@
 {
   "name": "lzbase62",
-  "version": "1.4.5",
+  "version": "1.4.6",
   "description": "LZ77(LZSS) based compression algorithm in base62 for JavaScript.",
   "main": "lzbase62.js",
   "directories": {
@@ -18,7 +18,11 @@
     "url": "git@github.com:polygonplanet/lzbase62.git"
   },
   "keywords": [
-    "compression", "compress", "lz", "lz77", "lzss", "base62", "string"
+    "compression",
+    "lz77",
+    "lzss",
+    "base62",
+    "string"
   ],
   "author": "polygon planet",
   "license": "MIT",
