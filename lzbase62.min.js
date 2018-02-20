@@ -1,5 +1,5 @@
 /*!
- * lzbase62 v1.4.6 - LZ77(LZSS) based compression algorithm in base62 for JavaScript
+ * lzbase62 v1.4.7 - LZ77(LZSS) based compression algorithm in base62 for JavaScript
  * Copyright (c) 2014-2018 polygon planet <polygon.planet.aqua@gmail.com>
  * https://github.com/polygonplanet/lzbase62
  * @license MIT

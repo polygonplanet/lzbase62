@@ -1,7 +1,7 @@
 {
   "name": "lzbase62",
   "main": "lzbase62.js",
-  "version": "1.4.6",
+  "version": "1.4.7",
   "homepage": "https://github.com/polygonplanet/lzbase62",
   "authors": [
     "polygonplanet <polygon.planet.aqua@gmail.com>"
