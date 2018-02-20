@@ -6,7 +6,7 @@
   "authors": [
     "polygonplanet <polygon.planet.aqua@gmail.com>"
   ],
-  "description": "LZ77(LZSS) based compression algorithm in base62 for JavaScript.",
+  "description": "LZ77(LZSS) based compression algorithm in base62 for JavaScript",
   "moduleType": [
     "amd",
     "globals",
@@ -17,6 +17,8 @@
     "lz77",
     "lzss",
     "base62",
+    "zip",
+    "zlib",
     "string"
   ],
   "license": "MIT",

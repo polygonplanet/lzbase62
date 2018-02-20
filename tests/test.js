@@ -1,3 +1,4 @@
+/* global describe, it, before */
 'use strict';
 
 var lzbase62 = require('../lzbase62');
