@@ -19,7 +19,7 @@
   "scripts": {
     "compile": "browserify src/index.js -o lzbase62.js -s lzbase62 -p [ bannerify --file src/banner.js ] --no-bundle-external --bare",
     "watch": "watchify src/index.js -o lzbase62.js -s lzbase62 -p [ bannerify --file src/banner.js ] --no-bundle-external --bare --poll=200 -v",
-    "minify": "uglifyjs lzbase62.js -o lzbase62.min.js --source-map \"url='lzbase62.min.js.map'\" --comments -c warnings=false -m -b ascii_only=true,beautify=false",
+    "minify": "uglifyjs lzbase62.js -o lzbase62.min.js --comments -c warnings=false -m -b ascii_only=true,beautify=false",
     "build": "npm run compile && npm run minify",
     "test": "npm run build && mocha tests/test"
   },
@@ -29,11 +29,22 @@
   },
   "keywords": [
     "compression",
+    "decompression",
+    "algorithm",
+    "compress",
+    "decompress",
+    "extract",
+    "zip",
     "lz77",
     "lzss",
+    "lzw",
+    "base64",
     "base62",
     "zip",
+    "gzip",
     "zlib",
+    "inflate",
+    "deflate",
     "string"
   ],
   "author": "polygon planet <polygon.planet.aqua@gmail.com>",
