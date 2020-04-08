@@ -116,9 +116,9 @@ exports.stringToArray = function(string) {
 
 // Sliding window
 exports.createWindow = function() {
-  var i = 8;
+  var i = config.WINDOW_MAX >> 7;
   var win = '        ';
-  while (!(i & 1024)) {
+  while (!(i & config.WINDOW_MAX)) {
     win += win;
     i <<= 1;
   }
