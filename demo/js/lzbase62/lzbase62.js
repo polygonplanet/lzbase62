@@ -1,10 +1,14 @@
 /*!
- * lzbase62 v1.4.9 - LZ77(LZSS) based compression algorithm in base62 for JavaScript
- * Copyright (c) 2014-2018 polygon planet <polygon.planet.aqua@gmail.com>
+ * lzbase62 v2.0.0 - LZ77(LZSS) based compression algorithm in base62 for JavaScript
+ * Copyright (c) 2014-2020 polygon planet <polygon.planet.aqua@gmail.com>
  * https://github.com/polygonplanet/lzbase62
  * @license MIT
  */
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.lzbase62 = f()}})(function(){var define,module,exports;return (function(){function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s}return e})()({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.lzbase62 = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+module.exports={
+  "version": "2.0.0"
+}
+},{}],2:[function(require,module,exports){
 var config = require('./config');
 var util = require('./util');
 
@@ -229,7 +233,7 @@ Compressor.prototype = {
 
 module.exports = Compressor;
 
-},{"./config":2,"./util":5}],2:[function(require,module,exports){
+},{"./config":3,"./util":6}],3:[function(require,module,exports){
 var HAS_TYPED = exports.HAS_TYPED = typeof Uint8Array !== 'undefined' && typeof Uint16Array !== 'undefined';
 
 // Test for String.fromCharCode.apply
@@ -305,7 +309,7 @@ var COMPRESS_FIXED_START = exports.COMPRESS_FIXED_START = COMPRESS_START + 5;
 exports.COMPRESS_INDEX = COMPRESS_FIXED_START + 5; // 59
 // Currently, 60 and 61 of the position is not used yet
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var config = require('./config');
 var util = require('./util');
 
@@ -338,11 +342,8 @@ Decompressor.prototype = {
       } else {
         var len = config.DECOMPRESS_CHUNK_SIZE - config.WINDOW_MAX;
         data = this._result.slice(config.WINDOW_MAX, config.WINDOW_MAX + len);
-
-        this._result = this._result.slice(0, config.WINDOW_MAX).concat(
-                       this._result.slice(config.WINDOW_MAX + len));
+        this._result = this._result.slice(0, config.WINDOW_MAX).concat(this._result.slice(config.WINDOW_MAX + len));
       }
-
       if (data.length > 0) {
         this._onDataCallback(util.bufferToString_fast(data));
       }
@@ -443,43 +444,39 @@ Decompressor.prototype = {
 
 module.exports = Decompressor;
 
-},{"./config":2,"./util":5}],4:[function(require,module,exports){
+},{"./config":3,"./util":6}],5:[function(require,module,exports){
 var Compressor = require('./compressor');
 var Decompressor = require('./decompressor');
 
-var lzbase62 = {
+exports.version = require('../package.json').version;
 
-  /**
-   * Compress data to a base 62(0-9a-zA-Z) encoded string
-   *
-   * @param {string|Buffer} data Input data
-   * @param {Object=} [options] Options
-   * @return {string} Compressed data
-   */
-  compress: function(data, options) {
-    return new Compressor(options).compress(data);
-  },
-
-  /**
-   * Decompress data from a base 62(0-9a-zA-Z) encoded string
-   *
-   * @param {string} data Input data
-   * @param {Object=} [options] Options
-   * @return {string} Decompressed data
-   */
-  decompress: function(data, options) {
-    return new Decompressor(options).decompress(data);
-  }
+/**
+ * Compress data to a base 62(0-9a-zA-Z) encoded string
+ *
+ * @param {string} data Input data
+ * @param {object} [options] Options
+ * @return {string} Compressed data
+ */
+exports.compress = function(data, options) {
+  return new Compressor(options).compress(data);
 };
 
-module.exports = lzbase62;
+/**
+ * Decompress data from a base 62(0-9a-zA-Z) encoded string
+ *
+ * @param {string} data Input data
+ * @param {object} [options] Options
+ * @return {string} Decompressed data
+ */
+exports.decompress = function(data, options) {
+  return new Decompressor(options).decompress(data);
+};
 
-},{"./compressor":1,"./decompressor":3}],5:[function(require,module,exports){
+},{"../package.json":1,"./compressor":2,"./decompressor":4}],6:[function(require,module,exports){
 var config = require('./config');
 var fromCharCode = String.fromCharCode;
 
-
-function createBuffer(bits, size) {
+exports.createBuffer = function(bits, size) {
   if (!config.HAS_TYPED) {
     return new Array(size);
   }
@@ -488,11 +485,9 @@ function createBuffer(bits, size) {
     case 8: return new Uint8Array(size);
     case 16: return new Uint16Array(size);
   }
-}
-exports.createBuffer = createBuffer;
+};
 
-
-function truncateBuffer(buffer, length) {
+var truncateBuffer = exports.truncateBuffer = function(buffer, length) {
   if (buffer.length === length) {
     return buffer;
   }
@@ -503,11 +498,9 @@ function truncateBuffer(buffer, length) {
 
   buffer.length = length;
   return buffer;
-}
-exports.truncateBuffer = truncateBuffer;
+};
 
-
-function bufferToString_fast(buffer, length) {
+exports.bufferToString_fast = function(buffer, length) {
   if (length == null) {
     length = buffer.length;
   } else {
@@ -535,11 +528,9 @@ function bufferToString_fast(buffer, length) {
   }
 
   return bufferToString_chunked(buffer);
-}
-exports.bufferToString_fast = bufferToString_fast;
+};
 
-
-function bufferToString_chunked(buffer) {
+var bufferToString_chunked = exports.bufferToString_chunked = function(buffer) {
   var string = '';
   var length = buffer.length;
   var i = 0;
@@ -574,11 +565,9 @@ function bufferToString_chunked(buffer) {
   }
 
   return string;
-}
-exports.bufferToString_chunked = bufferToString_chunked;
+};
 
-
-function bufferToString_slow(buffer) {
+var bufferToString_slow = exports.bufferToString_slow = function(buffer) {
   var string = '';
   var length = buffer.length;
 
@@ -587,11 +576,9 @@ function bufferToString_slow(buffer) {
   }
 
   return string;
-}
-exports.bufferToString_slow = bufferToString_slow;
+};
 
-
-function stringToArray(string) {
+exports.stringToArray = function(string) {
   var array = [];
   var len = string && string.length;
 
@@ -600,33 +587,18 @@ function stringToArray(string) {
   }
 
   return array;
-}
-exports.stringToArray = stringToArray;
-
+};
 
 // Sliding window
-function createWindow() {
-  var alpha = 'abcdefghijklmnopqrstuvwxyz';
-  var win = '';
-  var len = alpha.length;
-  var i, j, c, c2;
-
-  for (i = 0; i < len; i++) {
-    c = alpha.charAt(i);
-    for (j = len - 1; j > 15 && win.length < config.WINDOW_MAX; j--) {
-      c2 = alpha.charAt(j);
-      win += ' ' + c + ' ' + c2;
-    }
+exports.createWindow = function() {
+  var i = 8;
+  var win = '        ';
+  while (!(i & 1024)) {
+    win += win;
+    i <<= 1;
   }
-
-  while (win.length < config.WINDOW_MAX) {
-    win = ' ' + win;
-  }
-  win = win.slice(0, config.WINDOW_MAX);
-
   return win;
-}
-exports.createWindow = createWindow;
+};
 
-},{"./config":2}]},{},[4])(4)
+},{"./config":3}]},{},[5])(5)
 });
