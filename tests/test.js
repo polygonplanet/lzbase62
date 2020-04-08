@@ -1,8 +1,4 @@
-/* global describe, it, before */
-'use strict';
-
 var lzbase62 = require('../lzbase62');
-
 var assert = require('assert');
 var fs = require('fs');
 
@@ -58,6 +54,23 @@ describe('lzbase62', function() {
     done();
   });
 
+  /*
+  describe('compress/decompress', function() {
+    it('should be compress and decompress string', function() {
+      console.log('lzbase62: ', lzbase62);
+      const string = 'Hello World.';
+      const compressed = lzbase62.compress(string);
+      console.log('compressed: ', compressed);
+      assert(compressed.length > 0);
+      const decompressed = lzbase62.decompress(compressed);
+      console.log('decompressed: ', decompressed);
+      assert.equal(decompressed, string);
+    });
+  });
+  return;
+  */
+
+
   describe('compress/decompress', function() {
     it('ascii string', function() {
       assert(tests.hello.length > 0);
@@ -65,33 +78,6 @@ describe('lzbase62', function() {
       assert(compressed.length > 0);
       var decompressed = lzbase62.decompress(compressed);
       assert.equal(decompressed, tests.hello);
-    });
-
-    it('ascii string using onData events', function(done) {
-      assert(tests.hello.length > 0);
-      var compressed = [];
-      lzbase62.compress(tests.hello, {
-        onData: function(data) {
-          compressed.push(data);
-        },
-        onEnd: function() {
-          var result = compressed.join('');
-          assert(result.length > 0);
-
-          var decompressed = [];
-          lzbase62.decompress(result, {
-            onData: function(data) {
-              decompressed.push(data);
-            },
-            onEnd: function() {
-              var result = decompressed.join('');
-              assert(result.length > 0);
-              assert.equal(result, tests.hello);
-              done();
-            }
-          });
-        }
-      });
     });
 
     it('ascii string*5', function() {
@@ -104,68 +90,12 @@ describe('lzbase62', function() {
       assert.equal(decompressed, s);
     });
 
-    it('ascii string*5 using onData events', function(done) {
-      var s = new Array(6).join(tests.hello);
-      assert(s.length > 0);
-      var compressed = [];
-      lzbase62.compress(s, {
-        onData: function(data) {
-          compressed.push(data);
-        },
-        onEnd: function() {
-          var result = compressed.join('');
-          assert(result.length > 0);
-          assert(s.length > result.length);
-
-          var decompressed = [];
-          lzbase62.decompress(result, {
-            onData: function(data) {
-              decompressed.push(data);
-            },
-            onEnd: function() {
-              var result = decompressed.join('');
-              assert(result.length > 0);
-              assert.equal(result, s);
-              done();
-            }
-          });
-        }
-      });
-    });
-
     it('unicode [U+0000 - U+FFFF]', function() {
       assert(tests.unicode.length > 0);
       var compressed = lzbase62.compress(tests.unicode);
       assert(compressed.length > 0);
       var decompressed = lzbase62.decompress(compressed);
       assert.equal(decompressed, tests.unicode);
-    });
-
-    it('unicode [U+0000 - U+FFFF] using onData events', function(done) {
-      assert(tests.unicode.length > 0);
-      var compressed = [];
-      lzbase62.compress(tests.unicode, {
-        onData: function(data) {
-          compressed.push(data);
-        },
-        onEnd: function() {
-          var result = compressed.join('');
-          assert(result.length > 0);
-
-          var decompressed = [];
-          lzbase62.decompress(result, {
-            onData: function(data) {
-              decompressed.push(data);
-            },
-            onEnd: function() {
-              var result = decompressed.join('');
-              assert(result.length > 0);
-              assert.equal(result, tests.unicode);
-              done();
-            }
-          });
-        }
-      });
     });
 
     it('unicode [U+0000 - U+FFFF]*2', function() {
@@ -177,67 +107,12 @@ describe('lzbase62', function() {
       assert.equal(decompressed, s);
     });
 
-    it('unicode [U+0000 - U+FFFF]*2 using onData events', function(done) {
-      var s = tests.unicode + tests.unicode;
-      assert(s.length > 0);
-      var compressed = [];
-      lzbase62.compress(s, {
-        onData: function(data) {
-          compressed.push(data);
-        },
-        onEnd: function() {
-          var result = compressed.join('');
-          assert(result.length > 0);
-
-          var decompressed = [];
-          lzbase62.decompress(result, {
-            onData: function(data) {
-              decompressed.push(data);
-            },
-            onEnd: function() {
-              var result = decompressed.join('');
-              assert(result.length > 0);
-              assert.equal(result, s);
-              done();
-            }
-          });
-        }
-      });
-    });
-
     it('unicode [U+0000 - U+FFFF] reverse', function() {
       assert(tests.unicodeReverse.length > 0);
       var compressed = lzbase62.compress(tests.unicodeReverse);
       assert(compressed.length > 0);
       var decompressed = lzbase62.decompress(compressed);
       assert.equal(decompressed, tests.unicodeReverse);
-    });
-
-    it('unicode [U+0000 - U+FFFF] reverse using onData events', function(done) {
-      assert(tests.unicodeReverse.length > 0);
-      var compressed = [];
-      lzbase62.compress(tests.unicodeReverse, {
-        onData: function(data) {
-          compressed.push(data);
-        },
-        onEnd: function() {
-          var result = compressed.join('');
-          assert(result.length > 0);
-
-          var decompressed = [];
-          lzbase62.decompress(result, {
-            onData: function(data) {
-              decompressed.push(data);
-            },
-            onEnd: function() {
-              var result = decompressed.join('');
-              assert(result.length > 0);
-              assert.equal(result, tests.unicodeReverse);
-              done();
-            }
-          });
-        }
-      });
     });
 
     it('unicode chars', function() {
@@ -251,41 +126,6 @@ describe('lzbase62', function() {
       });
     });
 
-    it('unicode chars using onData events', function(done) {
-      var length = tests.chars.length;
-      var i = 0;
-
-      tests.chars.forEach(function(c) {
-        assert(c.length > 0);
-        var compressed = [];
-        lzbase62.compress(c, {
-          onData: function(data) {
-            compressed.push(data);
-          },
-          onEnd: function() {
-            var result = compressed.join('');
-            assert(result.length > 0);
-            assert(c.length > result.length);
-
-            var decompressed = [];
-            lzbase62.decompress(result, {
-              onData: function(data) {
-                decompressed.push(data);
-              },
-              onEnd: function() {
-                var result = decompressed.join('');
-                assert(result.length > 0);
-                assert.equal(result, c);
-                if (++i === length) {
-                  done();
-                }
-              }
-            });
-          }
-        });
-      });
-    });
-
     it('random chars', function() {
       tests.randoms.forEach(function(c) {
         assert(c.length > 0);
@@ -293,40 +133,6 @@ describe('lzbase62', function() {
         assert(compressed.length > 0);
         var decompressed = lzbase62.decompress(compressed);
         assert.equal(decompressed, c);
-      });
-    });
-
-    it('random chars using onData events', function(done) {
-      var length = tests.randoms.length;
-      var i = 0;
-
-      tests.randoms.forEach(function(c) {
-        assert(c.length > 0);
-        var compressed = [];
-        lzbase62.compress(c, {
-          onData: function(data) {
-            compressed.push(data);
-          },
-          onEnd: function() {
-            var result = compressed.join('');
-            assert(result.length > 0);
-
-            var decompressed = [];
-            lzbase62.decompress(result, {
-              onData: function(data) {
-                decompressed.push(data);
-              },
-              onEnd: function() {
-                var result = decompressed.join('');
-                assert(result.length > 0);
-                assert.equal(result, c);
-                if (++i === length) {
-                  done();
-                }
-              }
-            });
-          }
-        });
       });
     });
 
@@ -340,40 +146,6 @@ describe('lzbase62', function() {
       });
     });
 
-    it('bits using onData events', function(done) {
-      var length = tests.bits.length;
-      var i = 0;
-
-      tests.bits.forEach(function(c) {
-        assert(c.length > 0);
-        var compressed = [];
-        lzbase62.compress(c, {
-          onData: function(data) {
-            compressed.push(data);
-          },
-          onEnd: function() {
-            var result = compressed.join('');
-            assert(result.length > 0);
-
-            var decompressed = [];
-            lzbase62.decompress(result, {
-              onData: function(data) {
-                decompressed.push(data);
-              },
-              onEnd: function() {
-                var result = decompressed.join('');
-                assert(result.length > 0);
-                assert.equal(result, c);
-                if (++i === length) {
-                  done();
-                }
-              }
-            });
-          }
-        });
-      });
-    });
-
     it('unicode bits', function() {
       tests.unicodeBits.forEach(function(c) {
         assert(c.length > 0);
@@ -381,40 +153,6 @@ describe('lzbase62', function() {
         assert(compressed.length > 0);
         var decompressed = lzbase62.decompress(compressed);
         assert.equal(decompressed, c);
-      });
-    });
-
-    it('unicode bits using onData events', function(done) {
-      var length = tests.unicodeBits.length;
-      var i = 0;
-
-      tests.unicodeBits.forEach(function(c) {
-        assert(c.length > 0);
-        var compressed = [];
-        lzbase62.compress(c, {
-          onData: function(data) {
-            compressed.push(data);
-          },
-          onEnd: function() {
-            var result = compressed.join('');
-            assert(result.length > 0);
-
-            var decompressed = [];
-            lzbase62.decompress(result, {
-              onData: function(data) {
-                decompressed.push(data);
-              },
-              onEnd: function() {
-                var result = decompressed.join('');
-                assert(result.length > 0);
-                assert.equal(result, c);
-                if (++i === length) {
-                  done();
-                }
-              }
-            });
-          }
-        });
       });
     });
 
@@ -427,34 +165,6 @@ describe('lzbase62', function() {
       assert.equal(decompressed, s);
     });
 
-    it('this source code using onData events', function(done) {
-      var s = new Array(5).join(tests.code.toString());
-      assert(s.length > 0);
-      var compressed = [];
-      lzbase62.compress(s, {
-        onData: function(data) {
-          compressed.push(data);
-        },
-        onEnd: function() {
-          var result = compressed.join('');
-          assert(result.length > 0);
-
-          var decompressed = [];
-          lzbase62.decompress(result, {
-            onData: function(data) {
-              decompressed.push(data);
-            },
-            onEnd: function() {
-              var result = decompressed.join('');
-              assert(result.length > 0);
-              assert.equal(result, s);
-              done();
-            }
-          });
-        }
-      });
-    });
-
     it('this source code (Buffer)', function() {
       var buffer = tests.code;
       assert(buffer.length > 0);
@@ -462,34 +172,6 @@ describe('lzbase62', function() {
       assert(compressed.length > 0);
       var decompressed = lzbase62.decompress(compressed);
       assert.equal(decompressed, buffer.toString());
-    });
-
-    it('this source code (Buffer) using onData events', function(done) {
-      var buffer = tests.code;
-      assert(buffer.length > 0);
-      var compressed = [];
-      lzbase62.compress(buffer, {
-        onData: function(data) {
-          compressed.push(data);
-        },
-        onEnd: function() {
-          var result = compressed.join('');
-          assert(result.length > 0);
-
-          var decompressed = [];
-          lzbase62.decompress(result, {
-            onData: function(data) {
-              decompressed.push(data);
-            },
-            onEnd: function() {
-              var result = decompressed.join('');
-              assert(result.length > 0);
-              assert.equal(result, buffer.toString());
-              done();
-            }
-          });
-        }
-      });
     });
   });
 });
