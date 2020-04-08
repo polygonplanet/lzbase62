@@ -42,15 +42,15 @@ console.log(decompressed === data); // true
 ### node
 
 ```javascript
-var lzbase62 = require('lzbase62');
-var compressed = lzbase62.compress('hello hello hello');
+const lzbase62 = require('lzbase62');
+const compressed = lzbase62.compress('hello hello hello');
 ```
 
 ### webpack etc.
 
 ```javascript
 import lzbase62 from 'lzbase62';
-var compressed = lzbase62.compress('hello hello hello');
+const compressed = lzbase62.compress('hello hello hello');
 ```
 
 ### browser (standalone)
