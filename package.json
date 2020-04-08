@@ -41,6 +41,7 @@
     "compile": "browserify src/index.js -o dist/lzbase62.js -s lzbase62 -p [ bannerify --file src/banner.js ] --no-bundle-external --bare",
     "minify": "uglifyjs dist/lzbase62.js -o dist/lzbase62.min.js --comments -c -m -b ascii_only=true,beautify=false",
     "test": "./node_modules/.bin/eslint src && npm run build && mocha test/**/*.spec.js --timeout 10000 && karma start karma.conf.js",
+    "travis": "npm run build && mocha test/**/*.spec.js --timeout 10000 && karma start karma.conf.js --single-run",
     "watch": "watchify src/index.js -o dist/lzbase62.js -s lzbase62 -p [ bannerify --file src/banner.js ] --no-bundle-external --bare --poll=200 -v"
   },
   "devDependencies": {
