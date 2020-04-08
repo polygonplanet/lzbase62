@@ -66,8 +66,8 @@ Object **lzbase62** is defined in the global scope if running in the browser win
 
 ## API
 
-* [compress](#compress)
-* [decompress](#decompress)
+* [compress](#lzbase62compressdata-options)
+* [decompress](#lzbase62decompressdata-options)
 
 ----
 
