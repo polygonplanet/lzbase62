@@ -29,6 +29,7 @@
   "license": "MIT",
   "author": "polygon planet <polygon.planet.aqua@gmail.com>",
   "files": [
+    "dist/*",
     "src/*"
   ],
   "main": "src/index.js",
