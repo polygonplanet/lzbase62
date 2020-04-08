@@ -1,12 +1,12 @@
 /*!
- * lzbase62 v1.4.9 - LZ77(LZSS) based compression algorithm in base62 for JavaScript
+ * lzbase62 v2.0.0 - LZ77(LZSS) based compression algorithm in base62 for JavaScript
  * Copyright (c) 2014-2020 polygon planet <polygon.planet.aqua@gmail.com>
  * https://github.com/polygonplanet/lzbase62
  * @license MIT
  */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.lzbase62 = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 module.exports={
-  "version": "1.4.9"
+  "version": "2.0.0"
 }
 },{}],2:[function(require,module,exports){
 var config = require('./config');
@@ -453,8 +453,8 @@ exports.version = require('../package.json').version;
 /**
  * Compress data to a base 62(0-9a-zA-Z) encoded string
  *
- * @param {string|Buffer} data Input data
- * @param {Object=} [options] Options
+ * @param {string} data Input data
+ * @param {object} [options] Options
  * @return {string} Compressed data
  */
 exports.compress = function(data, options) {
@@ -465,7 +465,7 @@ exports.compress = function(data, options) {
  * Decompress data from a base 62(0-9a-zA-Z) encoded string
  *
  * @param {string} data Input data
- * @param {Object=} [options] Options
+ * @param {object} [options] Options
  * @return {string} Decompressed data
  */
 exports.decompress = function(data, options) {

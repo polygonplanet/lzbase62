@@ -1,6 +1,6 @@
 {
   "name": "lzbase62",
-  "version": "1.4.9",
+  "version": "2.0.0",
   "description": "LZ77(LZSS) based compression algorithm in base62 for JavaScript",
   "keywords": [
     "compression",
