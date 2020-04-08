@@ -2,31 +2,6 @@
   "name": "lzbase62",
   "version": "1.4.9",
   "description": "LZ77(LZSS) based compression algorithm in base62 for JavaScript",
-  "main": "src/index.js",
-  "directories": {
-    "test": "tests"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "bannerify": "^1.0.1",
-    "browserify": "^16.1.0",
-    "mocha": "^5.0.1",
-    "power-assert": "^1.4.4",
-    "uglify-js": "^3.3.11",
-    "uglifyify": "^4.0.5",
-    "watchify": "^3.10.0"
-  },
-  "scripts": {
-    "compile": "browserify src/index.js -o lzbase62.js -s lzbase62 -p [ bannerify --file src/banner.js ] --no-bundle-external --bare",
-    "watch": "watchify src/index.js -o lzbase62.js -s lzbase62 -p [ bannerify --file src/banner.js ] --no-bundle-external --bare --poll=200 -v",
-    "minify": "uglifyjs lzbase62.js -o lzbase62.min.js --comments -c warnings=false -m -b ascii_only=true,beautify=false",
-    "build": "npm run compile && npm run minify",
-    "test": "npm run build && mocha tests/test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:polygonplanet/lzbase62.git"
-  },
   "keywords": [
     "compression",
     "decompression",
@@ -47,10 +22,55 @@
     "deflate",
     "string"
   ],
-  "author": "polygon planet <polygon.planet.aqua@gmail.com>",
-  "license": "MIT",
+  "homepage": "https://github.com/polygonplanet/lzbase62",
   "bugs": {
     "url": "https://github.com/polygonplanet/lzbase62/issues"
   },
-  "homepage": "https://github.com/polygonplanet/lzbase62"
+  "license": "MIT",
+  "author": "polygon planet <polygon.planet.aqua@gmail.com>",
+  "files": [
+    "src/*"
+  ],
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:polygonplanet/lzbase62.git"
+  },
+  "scripts": {
+    "build": "npm run compile && npm run minify",
+    "compile": "browserify src/index.js -o dist/lzbase62.js -s lzbase62 -p [ bannerify --file src/banner.js ] --no-bundle-external --bare",
+    "minify": "uglifyjs dist/lzbase62.js -o dist/lzbase62.min.js --comments -c -m -b ascii_only=true,beautify=false",
+    "test": "./node_modules/.bin/eslint src && npm run build && mocha test/**/*.spec.js --timeout 10000 && karma start karma.conf.js",
+    "watch": "watchify src/index.js -o dist/lzbase62.js -s lzbase62 -p [ bannerify --file src/banner.js ] --no-bundle-external --bare --poll=200 -v"
+  },
+  "devDependencies": {
+    "bannerify": "^1.0.1",
+    "browserify": "^16.5.0",
+    "es6-shim": "^0.35.5",
+    "eslint": "^6.8.0",
+    "karma": "^4.4.1",
+    "karma-browserify": "^6.1.0",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-detect-browsers": "^2.3.3",
+    "karma-es6-shim": "^1.0.0",
+    "karma-firefox-launcher": "^1.3.0",
+    "karma-ie-launcher": "^1.0.0",
+    "karma-mocha": "^1.3.0",
+    "karma-mocha-reporter": "^2.2.5",
+    "karma-safari-launcher": "^1.0.0",
+    "mocha": "^7.0.0",
+    "package-json-versionify": "^1.0.4",
+    "power-assert": "^1.6.1",
+    "uglify-js": "^3.7.5",
+    "uglifyify": "^5.0.2",
+    "watchify": "^3.11.1"
+  },
+  "engines": {
+    "node": ">=8.10.0"
+  },
+  "browserify": {
+    "transform": [
+      "package-json-versionify"
+    ]
+  }
 }
