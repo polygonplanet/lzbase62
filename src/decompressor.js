@@ -30,11 +30,8 @@ Decompressor.prototype = {
       } else {
         var len = config.DECOMPRESS_CHUNK_SIZE - config.WINDOW_MAX;
         data = this._result.slice(config.WINDOW_MAX, config.WINDOW_MAX + len);
-
-        this._result = this._result.slice(0, config.WINDOW_MAX).concat(
-                       this._result.slice(config.WINDOW_MAX + len));
+        this._result = this._result.slice(0, config.WINDOW_MAX).concat(this._result.slice(config.WINDOW_MAX + len));
       }
-
       if (data.length > 0) {
         this._onDataCallback(util.bufferToString_fast(data));
       }

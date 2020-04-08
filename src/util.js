@@ -1,8 +1,7 @@
 var config = require('./config');
 var fromCharCode = String.fromCharCode;
 
-
-function createBuffer(bits, size) {
+exports.createBuffer = function(bits, size) {
   if (!config.HAS_TYPED) {
     return new Array(size);
   }
@@ -11,11 +10,9 @@ function createBuffer(bits, size) {
     case 8: return new Uint8Array(size);
     case 16: return new Uint16Array(size);
   }
-}
-exports.createBuffer = createBuffer;
+};
 
-
-function truncateBuffer(buffer, length) {
+var truncateBuffer = exports.truncateBuffer = function(buffer, length) {
   if (buffer.length === length) {
     return buffer;
   }
@@ -26,11 +23,9 @@ function truncateBuffer(buffer, length) {
 
   buffer.length = length;
   return buffer;
-}
-exports.truncateBuffer = truncateBuffer;
+};
 
-
-function bufferToString_fast(buffer, length) {
+exports.bufferToString_fast = function(buffer, length) {
   if (length == null) {
     length = buffer.length;
   } else {
@@ -58,11 +53,9 @@ function bufferToString_fast(buffer, length) {
   }
 
   return bufferToString_chunked(buffer);
-}
-exports.bufferToString_fast = bufferToString_fast;
+};
 
-
-function bufferToString_chunked(buffer) {
+var bufferToString_chunked = exports.bufferToString_chunked = function(buffer) {
   var string = '';
   var length = buffer.length;
   var i = 0;
@@ -97,11 +90,9 @@ function bufferToString_chunked(buffer) {
   }
 
   return string;
-}
-exports.bufferToString_chunked = bufferToString_chunked;
+};
 
-
-function bufferToString_slow(buffer) {
+var bufferToString_slow = exports.bufferToString_slow = function(buffer) {
   var string = '';
   var length = buffer.length;
 
@@ -110,11 +101,9 @@ function bufferToString_slow(buffer) {
   }
 
   return string;
-}
-exports.bufferToString_slow = bufferToString_slow;
+};
 
-
-function stringToArray(string) {
+exports.stringToArray = function(string) {
   var array = [];
   var len = string && string.length;
 
@@ -123,30 +112,15 @@ function stringToArray(string) {
   }
 
   return array;
-}
-exports.stringToArray = stringToArray;
-
+};
 
 // Sliding window
-function createWindow() {
-  var alpha = 'abcdefghijklmnopqrstuvwxyz';
-  var win = '';
-  var len = alpha.length;
-  var i, j, c, c2;
-
-  for (i = 0; i < len; i++) {
-    c = alpha.charAt(i);
-    for (j = len - 1; j > 15 && win.length < config.WINDOW_MAX; j--) {
-      c2 = alpha.charAt(j);
-      win += ' ' + c + ' ' + c2;
-    }
+exports.createWindow = function() {
+  var i = 8;
+  var win = '        ';
+  while (!(i & 1024)) {
+    win += win;
+    i <<= 1;
   }
-
-  while (win.length < config.WINDOW_MAX) {
-    win = ' ' + win;
-  }
-  win = win.slice(0, config.WINDOW_MAX);
-
   return win;
-}
-exports.createWindow = createWindow;
+};
