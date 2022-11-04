@@ -65,7 +65,7 @@
     "power-assert": "^1.6.1",
     "uglify-js": "^3.7.5",
     "uglifyify": "^5.0.2",
-    "watchify": "^3.11.1"
+    "watchify": "^4.0.0"
   },
   "engines": {
     "node": ">=8.10.0"
