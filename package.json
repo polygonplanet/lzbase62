@@ -27,7 +27,7 @@
     "url": "https://github.com/polygonplanet/lzbase62/issues"
   },
   "license": "MIT",
-  "author": "polygon planet <polygon.planet.aqua@gmail.com>",
+  "author": "polygonplanet <polygon.planet.aqua@gmail.com>",
   "files": [
     "dist/*",
     "src/*"
