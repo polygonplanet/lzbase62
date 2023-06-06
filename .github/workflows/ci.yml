@@ -1,0 +1,33 @@
+name: CI
+on: [push, pull_request]
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [8, 9, 10, 11, 12, 13, 14, 16, 18]
+    name: Test
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        name: Use Node.js ${{ matrix.node-version }}
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install
+        run: npm ci
+
+      - name: Setup Chrome
+        run: |
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo dpkg -i google-chrome-stable_current_amd64.deb
+          google-chrome-stable --version
+
+      - name: Test
+        run: npm run ci

@@ -26,21 +26,28 @@ module.exports = function(config) {
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     logLevel: config.LOG_INFO,
     autoWatch: false,
+    // Use ChromeHeadlessCI in CI environments and
+    // test with the detected browser in other environments (e.g. local)
     customLaunchers: {
-      // Custom launchers for Travis
-      Chrome_travis_ci: {
-        base: 'Chrome',
+      ChromeHeadlessCI: {
+        base: 'ChromeHeadless',
         flags: ['--no-sandbox']
       }
     },
     detectBrowsers: {
       enabled: true,
       usePhantomJS: false,
-      postDetection: function(availableBrowser) {
-        if (process.env.TRAVIS) {
-          return ['Chrome_travis_ci'];
+      postDetection: function(availableBrowsers) {
+        const isCI = process.env.CI;
+        if (isCI) {
+          return ['ChromeHeadlessCI'];
         }
-        return availableBrowser;
+        // Exclude IE and Edge
+        // As the new Edge is Chromium-based like Chrome, we're omitting its testing for simplicity
+        const filteredBrowsers = availableBrowsers.filter((browser) => {
+          return browser !== 'IE' && browser !== 'Edge';
+        });
+        return filteredBrowsers;
       }
     },
     plugins: [
@@ -50,11 +57,14 @@ module.exports = function(config) {
       'karma-mocha-reporter',
       'karma-chrome-launcher',
       'karma-firefox-launcher',
-      'karma-ie-launcher',
       'karma-safari-launcher',
       'karma-detect-browsers'
     ],
     singleRun: true,
     concurrency: Infinity
   });
+
+  if (process.env.CI) {
+    config.browsers = ['ChromeHeadlessCI'];
+  }
 };
