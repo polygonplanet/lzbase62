@@ -4,7 +4,7 @@ lzbase62
 LZ77(LZSS) based compression algorithm in base62 for JavaScript.
 
 [![NPM Version](https://img.shields.io/npm/v/lzbase62.svg)](https://www.npmjs.com/package/lzbase62)
-[![Build Status](https://travis-ci.org/polygonplanet/lzbase62.svg?branch=master)](https://travis-ci.org/polygonplanet/lzbase62)
+[![GitHub Actions Build Status](https://github.com/polygonplanet/lzbase62/actions/workflows/ci.yml/badge.svg)](https://github.com/polygonplanet/lzbase62/actions)
 [![Bundle Size (minified)](https://img.shields.io/github/size/polygonplanet/lzbase62/dist/lzbase62.min.js.svg)](https://github.com/polygonplanet/lzbase62/blob/master/dist/lzbase62.min.js)
 [![GitHub License](https://img.shields.io/github/license/polygonplanet/lzbase62.svg)](https://github.com/polygonplanet/lzbase62/blob/master/LICENSE)
 
