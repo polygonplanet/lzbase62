@@ -80,7 +80,7 @@ Compress data to a base62 `[0-9a-zA-Z]` encoded string.
 * **data** *(string)* : Input data
 * **[options]** *(object)* : Compress options
   * **onData** *(function (data) {})* : Called when a data is chunked
-  * **onEnd** *(function () {})* : Called when process is finished
+  * **onEnd** *(function () {})* : Called when process ends
 
 #### Returns
 
@@ -115,19 +115,18 @@ lzbase62.compress(string, {
 
 ### lzbase62.decompress(data, [options])
 
-Decompress data from a base62 `[0-9a-zA-Z]` encoded string.
+Decompress a string that has been compressed with [`lzbase62.compress()`](#lzbase62decompressdata-options)
 
 #### Arguments
 
 * **data** *(string)* : Input data
 * **[options]** *(object)* : Decompress options
   * **onData** *(function (data) {})* : Called when a data is chunked
-  * **onEnd** *(function () {})* : Called when process is finished
+  * **onEnd** *(function () {})* : Called when process ends
 
 #### Returns
 
 *(string)* : Decompressed data
-
 
 #### Example
 
