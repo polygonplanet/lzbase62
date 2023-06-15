@@ -1,14 +1,14 @@
-var assert = require('assert');
-var lzbase62 = require('../src/index');
+const assert = require('assert');
+const lzbase62 = require('../src/index');
 
-describe('UNICODE', function() {
-  var sampleCriticalValues, sampleCriticalNonAsciiValues;
+describe('UNICODE', () => {
+  let sampleCriticalValues, sampleCriticalNonAsciiValues;
 
-  before(function() {
-    var i;
+  before(() => {
+    let i;
 
-    var max = 60 * (60 + 1);
-    var bits = [59, 60, 61, max - 1, max, max + 1];
+    const max = 60 * (60 + 1);
+    const bits = [59, 60, 61, max - 1, max, max + 1];
 
     sampleCriticalValues = [];
     for (i = 0; i < bits.length; i++) {
@@ -23,46 +23,46 @@ describe('UNICODE', function() {
     }
   });
 
-  it('the sample values should have a valid length', function() {
+  it('the sample values should have a valid length', () => {
     assert(sampleCriticalValues.length === 6);
     assert(sampleCriticalNonAsciiValues.length === 18);
   });
 
-  it('should compress the ASCII character array and decompress to original string', function() {
-    sampleCriticalValues.forEach(function(continuousString) {
+  it('should compress the ASCII character array and decompress to original string', () => {
+    sampleCriticalValues.forEach((continuousString) => {
       assert(continuousString.length > 0);
 
-      var compressed = lzbase62.compress(continuousString);
+      const compressed = lzbase62.compress(continuousString);
       assert(compressed.length > 0);
 
-      var decompressed = lzbase62.decompress(compressed);
+      const decompressed = lzbase62.decompress(compressed);
       assert.equal(decompressed, continuousString);
     });
   });
 
-  it('bits using onData events', function(done) {
-    var length = sampleCriticalValues.length;
-    var i = 0;
+  it('bits using onData events', (done) => {
+    const length = sampleCriticalValues.length;
+    let i = 0;
 
-    sampleCriticalValues.forEach(function(continuousString) {
+    sampleCriticalValues.forEach((continuousString) => {
       assert(continuousString.length > 0);
-      var compressed = [];
+      const compressed = [];
 
       lzbase62.compress(continuousString, {
-        onData: function(data) {
+        onData: (data) => {
           compressed.push(data);
         },
-        onEnd: function() {
-          var result = compressed.join('');
+        onEnd: () => {
+          const result = compressed.join('');
           assert(result.length > 0);
 
-          var decompressed = [];
+          const decompressed = [];
           lzbase62.decompress(result, {
-            onData: function(data) {
+            onData: (data) => {
               decompressed.push(data);
             },
-            onEnd: function() {
-              var result = decompressed.join('');
+            onEnd: () => {
+              const result = decompressed.join('');
               assert(result.length > 0);
               assert.equal(result, continuousString);
               if (++i === length) {
@@ -75,41 +75,41 @@ describe('UNICODE', function() {
     });
   });
 
-  it('should compress the Non-ASCII character array and decompress to original string', function() {
-    sampleCriticalNonAsciiValues.forEach(function(continuousString) {
+  it('should compress the Non-ASCII character array and decompress to original string', () => {
+    sampleCriticalNonAsciiValues.forEach((continuousString) => {
       assert(continuousString.length > 0);
 
-      var compressed = lzbase62.compress(continuousString);
+      const compressed = lzbase62.compress(continuousString);
       assert(compressed.length > 0);
 
-      var decompressed = lzbase62.decompress(compressed);
+      const decompressed = lzbase62.decompress(compressed);
       assert.equal(decompressed, continuousString);
     });
   });
 
-  it('unicode bits using onData events', function(done) {
-    var length = sampleCriticalNonAsciiValues.length;
-    var i = 0;
+  it('unicode bits using onData events', (done) => {
+    const length = sampleCriticalNonAsciiValues.length;
+    let i = 0;
 
-    sampleCriticalNonAsciiValues.forEach(function(continuousString) {
+    sampleCriticalNonAsciiValues.forEach((continuousString) => {
       assert(continuousString.length > 0);
-      var compressed = [];
+      const compressed = [];
 
       lzbase62.compress(continuousString, {
-        onData: function(data) {
+        onData: (data) => {
           compressed.push(data);
         },
-        onEnd: function() {
-          var result = compressed.join('');
+        onEnd: () => {
+          const result = compressed.join('');
           assert(result.length > 0);
 
-          var decompressed = [];
+          const decompressed = [];
           lzbase62.decompress(result, {
-            onData: function(data) {
+            onData: (data) => {
               decompressed.push(data);
             },
-            onEnd: function() {
-              var result = decompressed.join('');
+            onEnd: () => {
+              const result = decompressed.join('');
               assert(result.length > 0);
               assert.equal(result, continuousString);
               if (++i === length) {

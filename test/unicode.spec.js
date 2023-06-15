@@ -1,11 +1,11 @@
-var assert = require('assert');
-var lzbase62 = require('../src/index');
+const assert = require('assert');
+const lzbase62 = require('../src/index');
 
-describe('UNICODE', function() {
-  var sampleUnicode, sampleReversedUnicode, sampleContinuousCharsArray;
+describe('UNICODE', () => {
+  let sampleUnicode, sampleReversedUnicode, sampleContinuousCharsArray;
 
-  before(function() {
-    var i;
+  before(() => {
+    let i;
 
     sampleUnicode = '';
     for (i = 0; i <= 0xffff; i++) {
@@ -23,38 +23,38 @@ describe('UNICODE', function() {
     }
   });
 
-  it('the sample values should have a valid length', function() {
+  it('the sample values should have a valid length', () => {
     assert(sampleUnicode.length === 65536);
     assert(sampleReversedUnicode.length === 65536);
     assert(sampleContinuousCharsArray.length === 2048);
   });
 
-  it('should compress UNICODE [U+0000 - U+FFFF] string and decompress to original string', function() {
-    var compressed = lzbase62.compress(sampleUnicode);
+  it('should compress UNICODE [U+0000 - U+FFFF] string and decompress to original string', () => {
+    const compressed = lzbase62.compress(sampleUnicode);
     assert(compressed.length > 0);
 
-    var decompressed = lzbase62.decompress(compressed);
+    const decompressed = lzbase62.decompress(compressed);
     assert.equal(decompressed, sampleUnicode);
   });
 
-  it('should compress UNICODE [U+0000 - U+FFFF] string and decompress to original string using onData events', function(done) {
-    var compressed = [];
+  it('should compress UNICODE [U+0000 - U+FFFF] string and decompress to original string using onData events', (done) => {
+    const compressed = [];
 
     lzbase62.compress(sampleUnicode, {
-      onData: function(data) {
+      onData: (data) => {
         compressed.push(data);
       },
-      onEnd: function() {
-        var result = compressed.join('');
+      onEnd: () => {
+        const result = compressed.join('');
         assert(result.length > 0);
 
-        var decompressed = [];
+        const decompressed = [];
         lzbase62.decompress(result, {
-          onData: function(data) {
+          onData: (data) => {
             decompressed.push(data);
           },
-          onEnd: function() {
-            var result = decompressed.join('');
+          onEnd: () => {
+            const result = decompressed.join('');
             assert(result.length > 0);
             assert.equal(result, sampleUnicode);
             done();
@@ -64,38 +64,38 @@ describe('UNICODE', function() {
     });
   });
 
-  it('should compress large UNICODE string and decompress to original string', function() {
-    var largeString = sampleUnicode + sampleUnicode;
+  it('should compress large UNICODE string and decompress to original string', () => {
+    const largeString = sampleUnicode + sampleUnicode;
     assert(largeString.length > 0);
 
-    var compressed = lzbase62.compress(largeString);
+    const compressed = lzbase62.compress(largeString);
     assert(compressed.length > 0);
 
-    var decompressed = lzbase62.decompress(compressed);
+    const decompressed = lzbase62.decompress(compressed);
     assert.equal(decompressed, largeString);
   });
 
-  it('should compress large UNICODE string and decompress to original string using onData events', function(done) {
-    var largeString = sampleUnicode + sampleUnicode;
+  it('should compress large UNICODE string and decompress to original string using onData events', (done) => {
+    const largeString = sampleUnicode + sampleUnicode;
     assert(largeString.length > 0);
 
-    var compressed = [];
+    const compressed = [];
 
     lzbase62.compress(largeString, {
-      onData: function(data) {
+      onData: (data) => {
         compressed.push(data);
       },
-      onEnd: function() {
-        var result = compressed.join('');
+      onEnd: () => {
+        const result = compressed.join('');
         assert(result.length > 0);
 
-        var decompressed = [];
+        const decompressed = [];
         lzbase62.decompress(result, {
-          onData: function(data) {
+          onData: (data) => {
             decompressed.push(data);
           },
-          onEnd: function() {
-            var result = decompressed.join('');
+          onEnd: () => {
+            const result = decompressed.join('');
             assert(result.length > 0);
             assert.equal(result, largeString);
             done();
@@ -105,32 +105,32 @@ describe('UNICODE', function() {
     });
   });
 
-  it('should compress reversed UNICODE string and decompress to original string', function() {
-    var compressed = lzbase62.compress(sampleReversedUnicode);
+  it('should compress reversed UNICODE string and decompress to original string', () => {
+    const compressed = lzbase62.compress(sampleReversedUnicode);
     assert(compressed.length > 0);
 
-    var decompressed = lzbase62.decompress(compressed);
+    const decompressed = lzbase62.decompress(compressed);
     assert.equal(decompressed, sampleReversedUnicode);
   });
 
-  it('should compress reversed UNICODE string and decompress to original string using onData events', function(done) {
-    var compressed = [];
+  it('should compress reversed UNICODE string and decompress to original string using onData events', (done) => {
+    const compressed = [];
 
     lzbase62.compress(sampleReversedUnicode, {
-      onData: function(data) {
+      onData: (data) => {
         compressed.push(data);
       },
-      onEnd: function() {
-        var result = compressed.join('');
+      onEnd: () => {
+        const result = compressed.join('');
         assert(result.length > 0);
 
-        var decompressed = [];
+        const decompressed = [];
         lzbase62.decompress(result, {
-          onData: function(data) {
+          onData: (data) => {
             decompressed.push(data);
           },
-          onEnd: function() {
-            var result = decompressed.join('');
+          onEnd: () => {
+            const result = decompressed.join('');
             assert(result.length > 0);
             assert.equal(result, sampleReversedUnicode);
             done();
@@ -140,43 +140,43 @@ describe('UNICODE', function() {
     });
   });
 
-  it('should compress the continuous character array and decompress to the original array', function() {
-    sampleContinuousCharsArray.forEach(function(continuousString) {
+  it('should compress the continuous character array and decompress to the original array', () => {
+    sampleContinuousCharsArray.forEach((continuousString) => {
       assert(continuousString.length > 0);
 
-      var compressed = lzbase62.compress(continuousString);
+      const compressed = lzbase62.compress(continuousString);
       assert(compressed.length > 0);
       assert(continuousString.length > compressed.length);
 
-      var decompressed = lzbase62.decompress(compressed);
+      const decompressed = lzbase62.decompress(compressed);
       assert.equal(decompressed, continuousString);
     });
   });
 
-  it('should compress the continuous character array and decompress to the original array using onData events', function(done) {
-    var length = sampleContinuousCharsArray.length;
-    var i = 0;
+  it('should compress the continuous character array and decompress to the original array using onData events', (done) => {
+    const length = sampleContinuousCharsArray.length;
+    let i = 0;
 
-    sampleContinuousCharsArray.forEach(function(continuousString) {
+    sampleContinuousCharsArray.forEach((continuousString) => {
       assert(continuousString.length > 0);
-      var compressed = [];
+      const compressed = [];
 
       lzbase62.compress(continuousString, {
-        onData: function(data) {
+        onData: (data) => {
           compressed.push(data);
         },
-        onEnd: function() {
-          var result = compressed.join('');
+        onEnd: () => {
+          const result = compressed.join('');
           assert(result.length > 0);
           assert(continuousString.length > result.length);
 
-          var decompressed = [];
+          const decompressed = [];
           lzbase62.decompress(result, {
-            onData: function(data) {
+            onData: (data) => {
               decompressed.push(data);
             },
-            onEnd: function() {
-              var result = decompressed.join('');
+            onEnd: () => {
+              const result = decompressed.join('');
               assert(result.length > 0);
               assert.equal(result, continuousString);
               if (++i === length) {
