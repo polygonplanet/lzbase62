@@ -59,9 +59,9 @@ Compressor.prototype = {
       if (i === 2) {
         s = data.charAt(offset) + data.charAt(offset + 1);
 
-        // Fast check by pre-match for the slow lastIndexOf.
+        // Use "indexOf" for faster checking, instead of "lastIndexOf"
         index = win.indexOf(s);
-        if (!~index || index > limit) {
+        if (index === -1 || index > limit) {
           break;
         }
       } else if (i === 3) {
@@ -77,7 +77,7 @@ Compressor.prototype = {
         lastIndex = win.lastIndexOf(s, limit);
       }
 
-      if (!~lastIndex) {
+      if (lastIndex === -1) {
         break;
       }
 
@@ -93,7 +93,6 @@ Compressor.prototype = {
         i++;
         break;
       }
-
     } while (++i < len);
 
     if (i === 2) {
