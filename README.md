@@ -58,8 +58,8 @@ const data = 'hello hello hello';
 console.log(data.length); // 17
 
 const compressed = lzbase62.compress(data);
-console.log(compressed); // 'tYVccfrgxGL'
-console.log(compressed.length); // 11
+console.log(compressed); // 'tYVccfxGM'
+console.log(compressed.length); // 9
 
 const decompressed = lzbase62.decompress(compressed);
 console.log(decompressed); // 'hello hello hello'
@@ -112,7 +112,7 @@ lzbase62.compress(string, {
     compressed.push(data);
   },
   onEnd: () => {
-    console.log(compressed.join('')); // 'tYVccfrgxGL'
+    console.log(compressed.join('')); // 'tYVccfxGM'
   }
 });
 ```
@@ -146,7 +146,7 @@ console.log(decompressed); // 'abcabcabcabcabc'
 Decompress data using `onData` and `onEnd` events:
 
 ```javascript
-const compressed = 'tYVccfrgxGL';
+const compressed = 'tYVccfxGM';
 const decompressed = [];
 
 lzbase62.decompress(compressed, {
