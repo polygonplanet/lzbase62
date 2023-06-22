@@ -121,7 +121,7 @@ lzbase62.compress(string, {
 
 ### lzbase62.decompress(data, [options])
 
-Decompresses a string that has been compressed with [`lzbase62.compress()`](#lzbase62decompressdata-options).
+Decompresses a string that has been compressed with [`lzbase62.compress()`](#lzbase62compressdata-options).
 
 #### Arguments
 
@@ -136,7 +136,7 @@ Decompresses a string that has been compressed with [`lzbase62.compress()`](#lzb
 
 #### Example
 
-Example of decompressing a string that has been compressed with [`lzbase62.compress()`](#lzbase62decompressdata-options):
+Example of decompressing a string that has been compressed with [`lzbase62.compress()`](#lzbase62compressdata-options):
 
 ```javascript
 const decompressed = lzbase62.decompress('tRSTxDM');
