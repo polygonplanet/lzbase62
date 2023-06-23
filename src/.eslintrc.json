@@ -1,0 +1,9 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 5
+  },
+  "env": {
+    "node": true,
+    "shared-node-browser": true
+  }
+}

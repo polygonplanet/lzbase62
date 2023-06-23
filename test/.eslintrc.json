@@ -1,7 +1,4 @@
 {
-  "parserOptions": {
-    "ecmaVersion": 13
-  },
   "env": {
     "node": true,
     "shared-node-browser": true,
