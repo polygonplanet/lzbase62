@@ -2,14 +2,13 @@ var config = require('./config');
 var fromCharCode = String.fromCharCode;
 
 exports.createBuffer = function(bits, size) {
-  if (!config.HAS_TYPED) {
-    return new Array(size);
+  if (config.HAS_TYPED) {
+    switch (bits) {
+      case 8: return new Uint8Array(size);
+      case 16: return new Uint16Array(size);
+    }
   }
-
-  switch (bits) {
-    case 8: return new Uint8Array(size);
-    case 16: return new Uint16Array(size);
-  }
+  return new Array(size);
 };
 
 var truncateBuffer = exports.truncateBuffer = function(buffer, length) {
