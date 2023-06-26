@@ -21,19 +21,20 @@ Decompressor.prototype = {
     return table;
   },
   _onData: function(ended) {
-    var data;
+    var chunk;
 
     if (this._onDataCallback) {
       if (ended) {
-        data = this._result;
+        chunk = this._result;
         this._result = [];
       } else {
         var len = config.DECOMPRESS_CHUNK_SIZE - config.WINDOW_MAX;
-        data = this._result.slice(config.WINDOW_MAX, config.WINDOW_MAX + len);
+        chunk = this._result.slice(config.WINDOW_MAX, config.WINDOW_MAX + len);
         this._result = this._result.slice(0, config.WINDOW_MAX).concat(this._result.slice(config.WINDOW_MAX + len));
       }
-      if (data.length > 0) {
-        this._onDataCallback(util.bufferToString_fast(data));
+
+      if (chunk.length > 0) {
+        this._onDataCallback(util.bufferToString_fast(chunk));
       }
     }
   },

@@ -85,7 +85,7 @@ Compresses data into a base62 `[0-9a-zA-Z]` encoded string.
 
 * **data** *(string)* : Input data
 * **[options]** *(object)* : Compression options
-  * **onData** *(function (data) {})* : Called when a data is chunked
+  * **onData** *(function (chunk: string) {})* : Called when a data is chunked
   * **onEnd** *(function () {})* : Called when process ends
 
 #### Returns
@@ -105,14 +105,14 @@ Compresses data using `onData` and `onEnd` events:
 
 ```javascript
 const string = 'hello hello hello';
-const compressed = [];
+const compressedChunks = [];
 
 lzbase62.compress(string, {
-  onData: (data) => {
-    compressed.push(data);
+  onData: (chunk) => {
+    compressedChunks.push(chunk);
   },
   onEnd: () => {
-    console.log(compressed.join('')); // 'tYVccfxGM'
+    console.log(compressedChunks.join('')); // 'tYVccfxGM'
   }
 });
 ```
@@ -127,7 +127,7 @@ Decompresses a string that has been compressed with [`lzbase62.compress()`](#lzb
 
 * **data** *(string)* : Input data
 * **[options]** *(object)* : Decompression options
-  * **onData** *(function (data) {})* : Called when a data is chunked
+  * **onData** *(function (chunk: string) {})* : Called when a data is chunked
   * **onEnd** *(function () {})* : Called when process ends
 
 #### Returns
@@ -147,14 +147,14 @@ Decompress data using `onData` and `onEnd` events:
 
 ```javascript
 const compressed = 'tYVccfxGM';
-const decompressed = [];
+const decompressedChunks = [];
 
 lzbase62.decompress(compressed, {
-  onData: (data) => {
-    decompressed.push(data);
+  onData: (chunk) => {
+    decompressedChunks.push(chunk);
   },
   onEnd: () => {
-    console.log(decompressed.join('')); // 'hello hello hello'
+    console.log(decompressedChunks.join('')); // 'hello hello hello'
   }
 });
 ```

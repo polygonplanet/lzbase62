@@ -23,12 +23,12 @@ Compressor.prototype = {
     return table;
   },
   _onData: function(buffer, length) {
-    var data = util.bufferToString_fast(buffer, length);
+    var chunk = util.bufferToString_fast(buffer, length);
 
     if (this._onDataCallback) {
-      this._onDataCallback(data);
+      this._onDataCallback(chunk);
     } else {
-      this._result += data;
+      this._result += chunk;
     }
   },
   _onEnd: function() {
