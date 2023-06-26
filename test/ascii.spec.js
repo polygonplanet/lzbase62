@@ -1,18 +1,22 @@
 const assert = require('assert');
 const lzbase62 = require('../src/index');
 
-describe('ASCII', () => {
+describe('ASCII string', () => {
   let sampleAsciiString;
 
-  before(() => {
+  beforeEach(() => {
     sampleAsciiString = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
   });
 
-  it('the sample values should have a valid length', () => {
+  afterEach(() => {
+    sampleAsciiString = null;
+  });
+
+  it('should have 95 characters, which is the number of printable ASCII characters', () => {
     assert(sampleAsciiString.length === 95);
   });
 
-  it('should compress simple ASCII string and decompress to original string', () => {
+  it('should correctly compress and decompress repeated ASCII string', () => {
     const data = 'hello hello hello';
     assert(data.length === 17);
 
@@ -21,11 +25,10 @@ describe('ASCII', () => {
     assert(compressed.length === 9);
 
     const decompressed = lzbase62.decompress(compressed);
-    assert(decompressed === 'hello hello hello');
     assert(decompressed === data);
   });
 
-  it('should compress all ASCII strings and decompress to original string', () => {
+  it('should correctly compress and decompress printable ASCII characters', () => {
     const compressed = lzbase62.compress(sampleAsciiString);
     assert(compressed.length > 0);
 
@@ -33,26 +36,28 @@ describe('ASCII', () => {
     assert.equal(decompressed, sampleAsciiString);
   });
 
-  it('should compress all ASCII strings and decompress to original string using onData events', (done) => {
-    const compressed = [];
+  it('should correctly compress and decompress ASCII string with onData and onEnd callbacks', (done) => {
+    const compressedChunks = [];
 
     lzbase62.compress(sampleAsciiString, {
-      onData: (data) => {
-        compressed.push(data);
+      onData: (chunk) => {
+        compressedChunks.push(chunk);
       },
       onEnd: () => {
-        const result = compressed.join('');
-        assert(result.length > 0);
+        assert(compressedChunks.length > 0);
 
-        const decompressed = [];
-        lzbase62.decompress(result, {
-          onData: (data) => {
-            decompressed.push(data);
+        const compressedStr = compressedChunks.join('');
+        const decompressedChunks = [];
+
+        lzbase62.decompress(compressedStr, {
+          onData: (chunk) => {
+            decompressedChunks.push(chunk);
           },
           onEnd: () => {
-            const result = decompressed.join('');
-            assert(result.length > 0);
-            assert.equal(result, sampleAsciiString);
+            assert(decompressedChunks.length > 0);
+
+            const decompressedStr = decompressedChunks.join('');
+            assert.equal(decompressedStr, sampleAsciiString);
             done();
           }
         });
@@ -60,46 +65,52 @@ describe('ASCII', () => {
     });
   });
 
-  it('should compress large ASCII string and decompress to original string', () => {
-    const largeString = new Array(6).join(sampleAsciiString);
-    assert(largeString.length > 0);
+  describe('Large ASCII string', () => {
+    let largeString;
 
-    const compressed = lzbase62.compress(largeString);
-    assert(compressed.length > 0);
-    assert(largeString.length > compressed.length);
+    beforeEach(() => {
+      largeString = new Array(6).join(sampleAsciiString);
+    });
 
-    const decompressed = lzbase62.decompress(compressed);
-    assert.equal(decompressed, largeString);
-  });
+    afterEach(() => {
+      largeString = null;
+    });
 
-  it('should compress large ASCII string and decompress to original string using onData events', (done) => {
-    const largeString = new Array(6).join(sampleAsciiString);
-    assert(largeString.length > 0);
+    it('should correctly compress and decompress large ASCII string', () => {
+      const compressed = lzbase62.compress(largeString);
+      assert(largeString.length > compressed.length);
 
-    const compressed = [];
+      const decompressed = lzbase62.decompress(compressed);
+      assert.equal(decompressed, largeString);
+    });
 
-    lzbase62.compress(largeString, {
-      onData: (data) => {
-        compressed.push(data);
-      },
-      onEnd: () => {
-        const result = compressed.join('');
-        assert(result.length > 0);
-        assert(largeString.length > result.length);
+    it('should correctly compress and decompress large ASCII string with onData and onEnd callbacks', (done) => {
+      const compressedChunks = [];
 
-        const decompressed = [];
-        lzbase62.decompress(result, {
-          onData: (data) => {
-            decompressed.push(data);
-          },
-          onEnd: () => {
-            const result = decompressed.join('');
-            assert(result.length > 0);
-            assert.equal(result, largeString);
-            done();
-          }
-        });
-      }
+      lzbase62.compress(largeString, {
+        onData: (chunk) => {
+          compressedChunks.push(chunk);
+        },
+        onEnd: () => {
+          assert(compressedChunks.length > 0);
+
+          const compressedStr = compressedChunks.join('');
+          const decompressedChunks = [];
+
+          lzbase62.decompress(compressedStr, {
+            onData: (chunk) => {
+              decompressedChunks.push(chunk);
+            },
+            onEnd: () => {
+              assert(decompressedChunks.length > 0);
+
+              const decompressedStr = decompressedChunks.join('');
+              assert.equal(decompressedStr, largeString);
+              done();
+            }
+          });
+        }
+      });
     });
   });
 });
