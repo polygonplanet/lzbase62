@@ -6,7 +6,7 @@ lzbase62
 [![Bundle Size (minified)](https://img.shields.io/github/size/polygonplanet/lzbase62/dist/lzbase62.min.js.svg)](https://github.com/polygonplanet/lzbase62/blob/master/dist/lzbase62.min.js)
 [![GitHub License](https://img.shields.io/github/license/polygonplanet/lzbase62.svg)](https://github.com/polygonplanet/lzbase62/blob/master/LICENSE)
 
-lzbase62 is a JavaScript library that compresses strings into ASCII strings composed solely of base62 (0-9, a-z, A-Z) characters, using the LZ77 based original algorithm.
+lzbase62 is a JavaScript library that compresses strings into ASCII strings composed solely of base62 (`0-9, a-z, A-Z`) characters, using the LZ77 based original algorithm.
 
 It can compress and decompress any Unicode string that JavaScript can handle.
 
@@ -18,22 +18,22 @@ And, since the compressed strings are composed solely of base62 characters, they
 ### npm
 
 ```bash
-$ npm install --save lzbase62
+npm install --save lzbase62
 ```
 
-#### using `import`
+#### Using ES6 `import`
 
 ```javascript
 import lzbase62 from 'lzbase62';
 ```
 
-#### using `require`
+#### Using CommonJS `require`
 
 ```javascript
 const lzbase62 = require('lzbase62');
 ```
 
-### browser (standalone)
+### Browser (standalone)
 
 You can install the library via npm or download it from the [release list](https://github.com/polygonplanet/lzbase62/tags). Use the `lzbase62.js` or `lzbase62.min.js` files included in the package.  
 \*Please note that if you use `git clone`, even the *master* branch may be under development.
@@ -81,18 +81,18 @@ console.log(decompressed === data); // true
 
 Compresses data into a base62 `[0-9a-zA-Z]` encoded string.
 
-#### Arguments
+#### Parameters
 
 * **data** *(string)* : Input data
 * **[options]** *(object)* : Compression options
   * **onData** *(function (chunk: string) {})* : Called when a data is chunked
   * **onEnd** *(function () {})* : Called when process ends
 
-#### Returns
+#### Return value
 
 *(string)* : Compressed data
 
-#### Example
+#### Examples
 
 Example of compressing a string:
 
@@ -123,18 +123,18 @@ lzbase62.compress(string, {
 
 Decompresses a string that has been compressed with [`lzbase62.compress()`](#lzbase62compressdata-options).
 
-#### Arguments
+#### Parameters
 
 * **data** *(string)* : Input data
 * **[options]** *(object)* : Decompression options
   * **onData** *(function (chunk: string) {})* : Called when a data is chunked
   * **onEnd** *(function () {})* : Called when process ends
 
-#### Returns
+#### Return value
 
 *(string)* : Decompressed data
 
-#### Example
+#### Examples
 
 Example of decompressing a string that has been compressed with [`lzbase62.compress()`](#lzbase62compressdata-options):
 
